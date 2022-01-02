@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import "./styles.css";
 
 import LanguageSelection from "./components/LanguageSelection";
 
@@ -16,6 +17,7 @@ import {
   spanishWords,
   russianWords,
 } from "./resources/imports";
+import Categories from "./components/categories/Categories";
 
 function App() {
   const inputRef = useRef("hello");
@@ -26,38 +28,46 @@ function App() {
     phonetics: [],
     word: "",
   });
-  const [words, setWords] = useState(englishWords);
-  const [loading, setLoading] = useState(true);
-  const [lang, setLang] = useState("en");
-  const [targetLang, setTargetLang] = useState("es");
 
-  let levels = [
+  let levelsData = [
     {
       levelIndex: 0,
-      levelName: "A1",
+      levelName: "A1 (Begginer 1)",
       levelWordsNumber: 500,
+      levelWordsArray: [],
     },
     {
       levelIndex: 1,
-      levelName: "A2",
+      levelName: "A2 (Begginer 2)",
       levelWordsNumber: 1000,
+      levelWordsArray: [],
     },
     {
       levelIndex: 2,
-      levelName: "B1",
+      levelName: "B1 (Intermediate 1)",
       levelWordsNumber: 2000,
+      levelWordsArray: [],
     },
     {
       levelIndex: 3,
-      levelName: "B2",
+      levelName: "B2 (Intermediate 2)",
       levelWordsNumber: 4000,
+      levelWordsArray: [],
     },
     {
       levelIndex: 4,
-      levelName: "C1",
+      levelName: "C1 (Advanced)",
       levelWordsNumber: 10000,
+      levelWordsArray: [],
     },
   ];
+
+  const [loading, setLoading] = useState(true);
+  const [isLangChosen, setisLangChosen] = useState(false);
+  const [words, setWords] = useState(englishWords);
+  const [lang, setLang] = useState("en");
+  const [targetLang, setTargetLang] = useState("es");
+  const [levels, setLevels] = useState(levelsData);
 
   const langs = [
     {
@@ -102,10 +112,21 @@ function App() {
         curr = words.length;
       }
       let levelWordsArray = words.slice(prev, curr);
-      levels[index].levelWordsArray = levelWordsArray;
+
+      setLevels((prevLevels) => {
+        let newLevels = prevLevels.map((prevLevel) => {
+          if (prevLevel.levelIndex === index) {
+            return { ...prevLevel, levelWordsArray: levelWordsArray };
+          } else {
+            return prevLevel;
+          }
+        });
+        return newLevels;
+      });
+
       return curr;
     }, 0);
-  }, []);
+  }, [words]);
 
   const fetchWordInfo = async (word, lang) => {
     setLoading(true);
@@ -157,7 +178,6 @@ function App() {
       );
     }
     const data = await response.json();
-    console.log(data.responseData.translatedText);
     setLoading(false);
   };
 
@@ -182,20 +202,30 @@ function App() {
     return foundLang.langName;
   };
 
+  const chooseLang = (lang) => {
+    setTargetLang(lang.langCode);
+    setWords(lang.langWords);
+    setisLangChosen(true);
+  };
+
   if (loading) {
     return <h1>Loading...</h1>;
   }
 
-  return (
-    <div className="app">
-      <LanguageSelection
-        langs={langs}
-        lang={getLangName(lang)}
-        getLangName={getLangName}
-        selectCurrentLanguage={selectCurrentLanguage}
-      />
-    </div>
-  );
+  if (!isLangChosen) {
+    return (
+      <div className="app">
+        <LanguageSelection
+          langs={langs}
+          lang={getLangName(lang)}
+          selectCurrentLanguage={selectCurrentLanguage}
+          chooseLang={chooseLang}
+        />
+      </div>
+    );
+  }
+
+  return <Categories levels={levels} />;
 }
 
 export default App;

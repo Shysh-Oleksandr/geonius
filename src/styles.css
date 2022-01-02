@@ -1,0 +1,155 @@
+* {
+  padding: 0;
+  margin: 0;
+  border: 0;
+}
+
+*,
+*:before,
+*:after {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+:focus,
+:active {
+  outline: none;
+}
+
+a:focus,
+a:active {
+  outline: none;
+}
+
+nav,
+footer,
+header,
+aside {
+  display: block;
+}
+
+html,
+body {
+  height: 100%;
+  width: 100%;
+  font-size: 100%;
+  line-height: 1;
+  font-size: 16px;
+  -ms-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+input,
+button,
+textarea {
+  font-family: inherit;
+}
+
+input::-ms-clear {
+  display: none;
+}
+
+button {
+  cursor: pointer;
+}
+
+button::-moz-focus-inner {
+  padding: 0;
+  border: 0;
+}
+
+a,
+a:visited {
+  text-decoration: none;
+  color: unset;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+ul li {
+  list-style: none;
+}
+
+img {
+  vertical-align: top;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: inherit;
+  font-weight: 400;
+}
+
+#root {
+  height: 100%;
+}
+
+.language-selection {
+  padding: 4rem 12rem;
+}
+
+.language-selection__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.language-selection__header h2 {
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.i-speak {
+  font-size: 1.3rem;
+  text-transform: uppercase;
+  color: rgb(165, 158, 158);
+}
+
+.language__select {
+  border: 0;
+}
+
+.language-selection__bottom {
+  margin-top: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.language__card {
+  box-shadow: 0px 6px 5px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  padding: 0 1rem 1rem;
+  flex: 0;
+  text-align: center;
+  border: 2px solid #bea9bc;
+  border-width: 2px 2px 4px;
+  border-radius: 2rem;
+  background-color: rgb(233, 225, 225);
+  transition: all 0.3s ease;
+}
+
+.language__card:hover {
+  background-color: rgb(207, 199, 199);
+  box-shadow: 0px 6px 3px rgba(0, 0, 0, 0.2);
+}
+
+.language__card h3 {
+  font-size: 1.3rem;
+}
+
+.language__icon img {
+  width: 100%;
+  height: 100%;
+
+  min-width: 170px;
+  min-height: 170px;
+}

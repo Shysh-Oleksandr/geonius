@@ -1,0 +1,134 @@
+.categories__wrapper {
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.categories {
+  flex: 0.3;
+  border-radius: 0.3rem;
+  margin: 2rem;
+  background-color: #fff;
+}
+
+.categories h3,
+.category {
+  color: #fff;
+  background-color: rgb(80, 213, 247);
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.categories__my-lists h3 {
+  border-top-left-radius: 0.3rem;
+  border-top-right-radius: 0.3rem;
+}
+
+.categories h3 span,
+.category span {
+  font-size: 1.4rem;
+  margin: 1.3rem;
+}
+
+.category {
+  padding: 0.7rem 0;
+  background-color: #fff;
+  color: #115166;
+  cursor: pointer;
+  border-bottom: 1px solid #e5e5e5;
+  line-height: 1.8rem;
+  transition: all 0.3s ease;
+}
+
+.category:hover {
+  background-color: rgb(248, 242, 242);
+}
+
+.category__words {
+  font-size: 1.2rem !important;
+  color: rgb(158, 154, 154) !important;
+  padding: 0 !important;
+}
+
+.category:last-child {
+  border: 0;
+}
+
+.category span {
+  font-size: 0.9rem;
+  vertical-align: bottom;
+  padding: 0.35rem;
+
+  color: #fff;
+  border-radius: 0.5rem;
+}
+
+.category h4 {
+  vertical-align: middle;
+  position: relative;
+}
+
+.unknown-icon,
+.unknown-uncertain-icon:first-child {
+  background-color: rgb(231, 78, 78);
+  padding: 0.34rem 0.38rem !important;
+}
+
+.uncertain-icon,
+.unknown-uncertain-icon:last-child {
+  background-color: rgb(245, 241, 19);
+  font-size: 1.2rem !important;
+  padding: 0.2rem 0.25rem !important;
+}
+
+.learned-icon {
+  background-color: rgb(68, 241, 45);
+  font-size: 1.2rem !important;
+  padding: 0.2rem 0.25rem !important;
+}
+
+.favorites-icon {
+  background-color: #3fbede;
+  font-size: 1rem !important;
+  padding: 0.3rem 0.35rem !important;
+}
+
+.category span svg {
+  vertical-align: text-top;
+}
+
+.unknown-uncertain-icon {
+  display: inline-block;
+  height: 27px;
+}
+
+.unknown-uncertain-icon svg {
+  vertical-align: super !important;
+}
+
+.unknown-uncertain-icon:first-child {
+  transform: translateX(15%);
+  z-index: 5;
+  margin: 0;
+  margin-left: 0.6rem;
+}
+
+.unknown-uncertain-icon:last-child {
+  z-index: 7;
+  transform: translateX(-15%);
+  margin: 0;
+  margin-right: 0.3rem;
+}
+
+.categories__levels span {
+  padding: 0;
+  margin: 0;
+}
+
+.categories__levels h4 {
+  margin-left: 1.3rem;
+}
