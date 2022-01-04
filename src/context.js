@@ -18,6 +18,13 @@ const AppProvider = ({ children }) => {
   const [currentCategoryWords, setCurrentCategoryWords] = useState([]);
   const [currentList, setCurrentList] = useState(null);
   const [isCategoryMenuOpened, setIsCategoryMenuOpened] = useState(true);
+  const [wordData, setWordData] = useState({
+    meanings: [],
+    origin: "",
+    phonetic: "",
+    phonetics: [],
+    word: "",
+  });
   // const [searchTerm, setSearchTerm] = useState("a");
 
   const selectCurrentLanguage = (event) => {
@@ -99,6 +106,9 @@ const AppProvider = ({ children }) => {
         currLangName,
         currentCategoryWords,
         isCategoryMenuOpened,
+        wordData,
+        setLoading,
+        setWordData,
         setCurrentCategory,
         setIsCategoryMenuOpened,
         chooseLang,

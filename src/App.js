@@ -3,6 +3,7 @@ import LanguageSelection from "./components/LanguageSelection";
 import Toolbar from "./components/toolbar/Toolbar";
 import { useGlobalContext } from "./context";
 import "./styles.css";
+import WordsLearning from "./components/wordsLearning/WordsLearning";
 
 function App() {
   const {
@@ -14,6 +15,7 @@ function App() {
   } = useGlobalContext();
 
   if (loading) {
+    console.log("load");
     return <h1>Loading...</h1>;
   }
 
@@ -32,6 +34,7 @@ function App() {
         currentCategoryWords={currentCategoryWords}
       />
       {isCategoryMenuOpened && <Categories />}
+      <WordsLearning />
     </div>
   );
 }
