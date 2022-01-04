@@ -1,11 +1,17 @@
 import Categories from "./components/categories/Categories";
 import LanguageSelection from "./components/LanguageSelection";
 import Toolbar from "./components/toolbar/Toolbar";
-import "./styles.css";
 import { useGlobalContext } from "./context";
+import "./styles.css";
 
 function App() {
-  const { loading, isLangChosen } = useGlobalContext();
+  const {
+    loading,
+    isLangChosen,
+    isCategoryMenuOpened,
+    currentCategory,
+    currentCategoryWords,
+  } = useGlobalContext();
 
   if (loading) {
     return <h1>Loading...</h1>;
@@ -21,8 +27,11 @@ function App() {
 
   return (
     <div className="main">
-      <Toolbar />
-      <Categories />
+      <Toolbar
+        currentCategory={currentCategory}
+        currentCategoryWords={currentCategoryWords}
+      />
+      {isCategoryMenuOpened && <Categories />}
     </div>
   );
 }

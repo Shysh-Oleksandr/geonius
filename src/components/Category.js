@@ -1,8 +1,15 @@
 import React from "react";
 
-const Category = ({ name, levelWords, icon, secondIcon, className }) => {
+const Category = ({
+  name,
+  levelWords,
+  icon,
+  secondIcon,
+  className,
+  openCategory,
+}) => {
   return (
-    <div className="category">
+    <div className="category" onClick={() => openCategory(levelWords, name)}>
       <h4>
         <span className={className}>{icon}</span>
         {secondIcon && <span className={className}>{secondIcon}</span>}

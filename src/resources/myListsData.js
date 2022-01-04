@@ -1,8 +1,6 @@
 import {
-  BiCategory,
-  BsQuestionLg,
-  AiFillFolder,
   AiFillStar,
+  BsQuestionLg,
   CgShapeTriangle,
   IoMdCheckmark,
 } from "../components/categories/imports";

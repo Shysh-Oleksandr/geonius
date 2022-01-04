@@ -7,7 +7,6 @@ import langs from "./resources/langData";
 const AppContext = React.createContext();
 
 const AppProvider = ({ children }) => {
-  const [currentList, setCurrentList] = useState(null);
   const [levels, setLevels] = useState(levelsData);
   const [isLangChosen, setIsLangChosen] = useState(false);
   const [words, setWords] = useState(englishWords);
@@ -16,11 +15,10 @@ const AppProvider = ({ children }) => {
   const [targetLang, setTargetLang] = useState("es");
   const [myLists, setMyLists] = useState(myListsData);
   const [currentCategory, setCurrentCategory] = useState(null);
+  const [currentCategoryWords, setCurrentCategoryWords] = useState([]);
+  const [currentList, setCurrentList] = useState(null);
+  const [isCategoryMenuOpened, setIsCategoryMenuOpened] = useState(true);
   // const [searchTerm, setSearchTerm] = useState("a");
-
-  const levelsByWords = levels.map((level) => {
-    return level.levelWordsNumber;
-  });
 
   const selectCurrentLanguage = (event) => {
     let value = event.target.value;
@@ -33,13 +31,16 @@ const AppProvider = ({ children }) => {
     setWords(lang.langWords);
   };
 
+  const levelsByWords = levels.map((level) => {
+    return level.levelWordsNumber;
+  });
+
   function defineWordsByLevel() {
     levelsByWords.reduce((prev, curr, index) => {
       if (curr > words.length) {
         curr = words.length;
       }
       let levelWordsArray = words.slice(prev, curr);
-
       setLevels((prevLevels) => {
         let newLevels = prevLevels.map((prevLevel) => {
           if (prevLevel.levelIndex === index) {
@@ -60,6 +61,16 @@ const AppProvider = ({ children }) => {
     return foundLang.langName;
   };
 
+  const getCategoryWords = (categoryName) => {
+    if (!categoryName) {
+      return [];
+    }
+
+    let foundLevel = levels.find((level) => level.levelName === categoryName);
+
+    return foundLevel.levelWordsArray;
+  };
+
   let currLangName = getLangName(lang);
 
   useEffect(() => {
@@ -67,6 +78,10 @@ const AppProvider = ({ children }) => {
       defineWordsByLevel();
     }
   }, [words]);
+
+  useEffect(() => {
+    setCurrentCategoryWords(getCategoryWords(currentCategory));
+  }, [currentCategory]);
 
   return (
     <AppContext.Provider
@@ -82,6 +97,10 @@ const AppProvider = ({ children }) => {
         currentCategory,
         levelsByWords,
         currLangName,
+        currentCategoryWords,
+        isCategoryMenuOpened,
+        setCurrentCategory,
+        setIsCategoryMenuOpened,
         chooseLang,
         selectCurrentLanguage,
       }}
