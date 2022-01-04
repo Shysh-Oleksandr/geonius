@@ -1,16 +1,16 @@
 import React from "react";
 import LanguageCard from "./LanguageCard";
+import langs from "./../resources/langData";
+import { useGlobalContext } from "./../context";
 
-const LanguageSelection = ({
-  lang,
-  langs,
-  selectCurrentLanguage,
-  chooseLang,
-}) => {
+const LanguageSelection = () => {
+  const { currLangName, selectCurrentLanguage, chooseLang } =
+    useGlobalContext();
+
   return (
     <div className="language-selection">
       <div className="language-selection__header">
-        <h2>Language Courses for {lang} Speakers</h2>
+        <h2>Language Courses for {currLangName} Speakers</h2>
         <div className="i-speak">
           <span>I speak </span>
           <select
@@ -29,7 +29,7 @@ const LanguageSelection = ({
       </div>
       <div className="language-selection__bottom">
         {langs.map((langEl, index) => {
-          if (langEl.langName !== lang) {
+          if (langEl.langName !== currLangName) {
             return (
               <LanguageCard lang={langEl} key={index} chooseLang={chooseLang} />
             );

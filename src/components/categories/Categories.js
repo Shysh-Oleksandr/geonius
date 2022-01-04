@@ -1,44 +1,13 @@
 import React from "react";
 import Category from "../Category";
+import { AiFillFolder, BiCategory } from "./imports";
+import { useGlobalContext } from "./../../context";
+import myListsData from "./../../resources/myListsData";
 import "./categories.css";
-import {
-  BiCategory,
-  BsQuestionLg,
-  AiFillFolder,
-  AiFillStar,
-  CgShapeTriangle,
-  IoMdCheckmark,
-} from "./imports";
 
-const Categories = ({ levels }) => {
-  const myLists = [
-    {
-      name: "Unknown + Uncertain",
-      className: "unknown-uncertain-icon",
-      icon: <BsQuestionLg />,
-      secondIcon: <CgShapeTriangle />,
-    },
-    {
-      name: "Unknown",
-      className: "unknown-icon",
-      icon: <BsQuestionLg />,
-    },
-    {
-      name: "Uncertain",
-      className: "uncertain-icon",
-      icon: <CgShapeTriangle />,
-    },
-    {
-      name: "Learned",
-      className: "learned-icon",
-      icon: <IoMdCheckmark />,
-    },
-    {
-      name: "Favorites",
-      className: "favorites-icon",
-      icon: <AiFillStar />,
-    },
-  ];
+const Categories = () => {
+  const { levels } = useGlobalContext();
+
   return (
     <div className="categories__wrapper">
       <div className="categories">
@@ -49,11 +18,11 @@ const Categories = ({ levels }) => {
             </span>
             My lists
           </h3>
-          {myLists.map((list, index) => {
+          {myListsData.map((list, index) => {
             return (
               <Category
                 key={index}
-                name={list.name}
+                name={list.listName}
                 className={list.className}
                 icon={list.icon}
                 secondIcon={list.secondIcon}
