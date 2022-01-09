@@ -1,12 +1,13 @@
 import React from "react";
-import { MdPlayArrow, MdChromeReaderMode } from "react-icons/md";
+import { MdPlayArrow, MdChromeReaderMode, MdLanguage } from "react-icons/md";
 import { GiHamburgerMenu } from "react-icons/gi";
 import "./toolbar.css";
 import { AiOutlineSearch } from "react-icons/ai";
 import { useGlobalContext } from "./../../context";
 
 const Toolbar = ({ currentCategory, currentCategoryWords }) => {
-  const { isCategoryMenuOpened, setIsCategoryMenuOpened } = useGlobalContext();
+  const { isCategoryMenuOpened, setIsCategoryMenuOpened, setIsLangChosen } =
+    useGlobalContext();
   return (
     <div className="toolbar">
       <button
@@ -27,6 +28,13 @@ const Toolbar = ({ currentCategory, currentCategoryWords }) => {
         </div>
       </button>
       <div className="toolbar__right">
+        <button
+          type="button"
+          className="toolbar__language"
+          onClick={() => setIsLangChosen(false)}
+        >
+          <MdLanguage />
+        </button>
         <button type="button" className="toolbar__search">
           <AiOutlineSearch />
         </button>
