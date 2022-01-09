@@ -41,40 +41,67 @@ const Word = () => {
     );
   }
 
+  function getSynonymsAntonyms(data) {
+    let wordSynonyms = [];
+    let wordAntonyms = [];
+    data.meanings.map((item) => {
+      item.definitions.map((definition) => {
+        definition.synonyms.map((synonym) => wordSynonyms.push(synonym));
+        definition.antonyms.map((antonym) => wordAntonyms.push(antonym));
+      });
+    });
+
+    wordSynonyms = [...new Set(wordSynonyms)].slice(0, maxSynonymsToShow);
+    wordAntonyms = [...new Set(wordAntonyms)].slice(0, maxSynonymsToShow);
+
+    setWordSynonyms(wordSynonyms);
+    setWordAntonyms(wordAntonyms);
+  }
+
+  function getWordExamples(data) {
+    for (let i = 0; i < data.length; i++) {
+      const wordExampleTranslation = data[i].responseData.translatedText;
+      setWordExamples((prevWordExamples) => {
+        let newWordExamples = prevWordExamples.map((prevWordExample) => {
+          if (prevWordExamples.indexOf(prevWordExample) === i) {
+            return {
+              ...prevWordExample,
+              wordExampleTranslation: wordExampleTranslation.replace(
+                "&#39;",
+                "'"
+              ),
+            };
+          } else {
+            return prevWordExample;
+          }
+        });
+        return newWordExamples;
+      });
+    }
+  }
+
+  function checkResponse(response) {
+    if (response.ok) {
+      return response.json();
+    } else {
+      return Promise.reject(response);
+    }
+  }
+
   const fetchWordInfo = (word, targetLang, lang) => {
-    let wordExamplesLocal;
     setIsWordLoading(true);
+    let wordExamplesLocal;
+
     if (word === "") {
       word = "no";
     }
+
     fetch(`https://api.dictionaryapi.dev/api/v2/entries/${targetLang}/${word}`)
-      .then(function (response) {
-        if (response.ok) {
-          return response.json();
-        } else {
-          console.log("rej1");
-          return Promise.reject(response);
-        }
-      })
+      .then((response) => checkResponse(response))
       .then(function (data) {
-        // Store the post data to a variable
         setWordData(data[0]);
-        console.log(data[0]);
 
-        let wordSynonyms = [];
-        let wordAntonyms = [];
-        data[0].meanings.map((item) => {
-          item.definitions.map((definition) => {
-            definition.synonyms.map((synonym) => wordSynonyms.push(synonym));
-            definition.antonyms.map((antonym) => wordAntonyms.push(antonym));
-          });
-        });
-
-        wordSynonyms = [...new Set(wordSynonyms)].slice(0, maxSynonymsToShow);
-        wordAntonyms = [...new Set(wordAntonyms)].slice(0, maxSynonymsToShow);
-
-        setWordSynonyms(wordSynonyms);
-        setWordAntonyms(wordAntonyms);
+        getSynonymsAntonyms(data[0]);
 
         wordExamplesLocal = data[0].meanings.map((item) => {
           return { wordExample: item.definitions[0].example };
@@ -84,15 +111,7 @@ const Word = () => {
         // Fetch another API
         return fetchTranslation(word, targetLang, lang);
       })
-      .then(function (response) {
-        if (response.ok) {
-          return response.json();
-        } else {
-          console.log("rej2");
-
-          return Promise.reject(response);
-        }
-      })
+      .then((response) => checkResponse(response))
       .then(function (userData) {
         let wordTranslations = [
           ...new Set(
@@ -118,31 +137,12 @@ const Word = () => {
         );
       })
       .then(function (data) {
-        for (let i = 0; i < data.length; i++) {
-          const wordExampleTranslation = data[i].responseData.translatedText;
-          setWordExamples((prevWordExamples) => {
-            let newWordExamples = prevWordExamples.map((prevWordExample) => {
-              if (prevWordExamples.indexOf(prevWordExample) === i) {
-                return {
-                  ...prevWordExample,
-                  wordExampleTranslation: wordExampleTranslation.replace(
-                    "&#39;",
-                    "'"
-                  ),
-                };
-              } else {
-                return prevWordExample;
-              }
-            });
-            return newWordExamples;
-          });
-        }
+        getWordExamples(data);
 
         setIsWordLoading(false);
       })
       .catch(function (error) {
         console.warn(error);
-        console.log("loading false");
         setIsWordLoading(false);
       });
   };
@@ -157,10 +157,10 @@ const Word = () => {
   }
 
   return (
-    <div>
+    <div className="word">
       <div className="word__audio-container">
         <h2>{word}</h2>
-        <h4>
+        <h4 className="word__phonetic">
           {phonetics[0].audio && <MdVolumeUp />}
           {phonetics[0].text}
           {phonetics[0].audio && (
@@ -179,50 +179,50 @@ const Word = () => {
             );
           })}
         </ol>
-        {wordExamples && (
-          <div className="word__examples">
-            <h4 className="word__example-label">Examples</h4>
-            {wordExamples.map((wordExample, index) => {
+      </div>
+      {wordExamples && (
+        <div className="word__examples">
+          <h4 className="word__example-label">Examples</h4>
+          {wordExamples.map((wordExample, index) => {
+            return (
+              <div key={index} className="word__example-container">
+                <h4 className="word__example">{wordExample.wordExample}</h4>
+                <h5 className="word__example-translation">
+                  {wordExample.wordExampleTranslation}
+                </h5>
+              </div>
+            );
+          })}
+        </div>
+      )}
+      {wordSynonyms && (
+        <div className="word__synonyms-container">
+          <h4 className="word__synonyms-label">Synonyms</h4>
+          <div className="word__synonyms">
+            {wordSynonyms.map((word, index) => {
               return (
-                <div key={index} className="word__example-container">
-                  <h4 className="word__example">{wordExample.wordExample}</h4>
-                  <h5 className="word__example-translation">
-                    {wordExample.wordExampleTranslation}
-                  </h5>
+                <div key={index} className="word__synonym">
+                  {word}
                 </div>
               );
             })}
           </div>
-        )}
-        {wordSynonyms && (
-          <div className="word__synonyms-container">
-            <h4 className="word__synonyms-label">Synonyms</h4>
-            <div className="word__synonyms">
-              {wordSynonyms.map((word, index) => {
-                return (
-                  <div key={index} className="word__synonym">
-                    {word}
-                  </div>
-                );
-              })}
-            </div>
+        </div>
+      )}
+      {wordAntonyms && (
+        <div className="word__antonyms-container">
+          <h4 className="word__antonyms-label">Antonyms</h4>
+          <div className="word__antonyms">
+            {wordAntonyms.map((word, index) => {
+              return (
+                <div key={index} className="word__antonym">
+                  {word}
+                </div>
+              );
+            })}
           </div>
-        )}
-        {wordAntonyms && (
-          <div className="word__antonyms-container">
-            <h4 className="word__antonyms-label">Antonyms</h4>
-            <div className="word__antonyms">
-              {wordAntonyms.map((word, index) => {
-                return (
-                  <div key={index} className="word__antonym">
-                    {word}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
