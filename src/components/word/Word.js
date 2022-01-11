@@ -1,9 +1,14 @@
-import { React, useEffect } from "react";
+import { React, useEffect, useRef } from "react";
 import { MdVolumeUp } from "react-icons/md";
 import { useState } from "react/cjs/react.development";
-import { useGlobalContext } from "./../context";
+import { useGlobalContext } from "../../context";
+import "./word.css";
+import { AiFillStar } from "react-icons/ai";
+import partOfSpeechShortForm from "./partOfSpeechData";
+import MyListBtn from "./../MyListBtn";
 
-const Word = () => {
+const Word = ({ currentWordIndex, currentCategoryWords }) => {
+  const wordAudio = useRef(null);
   const maxSynonymsToShow = 8;
   const { targetLang, lang } = useGlobalContext();
 
@@ -58,7 +63,7 @@ const Word = () => {
     setWordAntonyms(wordAntonyms);
   }
 
-  function getWordExamples(data) {
+  function getWordExamplesTranslations(data) {
     for (let i = 0; i < data.length; i++) {
       const wordExampleTranslation = data[i].responseData.translatedText;
       setWordExamples((prevWordExamples) => {
@@ -80,6 +85,34 @@ const Word = () => {
     }
   }
 
+  function getWordExamples(wordExamplesLocal, data) {
+    wordExamplesLocal = data[0].meanings.map((item) => {
+      if (!item.definitions[0].example) {
+        return;
+      }
+      if (
+        !item.definitions[0].example.includes(`${data[0].word}`) &&
+        !item.definitions[0].example.startsWith(data[0].word) &&
+        !item.definitions[0].example.endsWith(data[0].word)
+      ) {
+        return {
+          wordExample: item.definitions[0].example,
+        };
+      }
+      return {
+        wordExample: highlightWord(
+          `${data[0].word}`,
+          item.definitions[0].example
+        ),
+      };
+    });
+    if (wordExamplesLocal.includes(undefined)) {
+      wordExamplesLocal = [];
+    }
+
+    return wordExamplesLocal;
+  }
+
   function checkResponse(response) {
     if (response.ok) {
       return response.json();
@@ -88,10 +121,45 @@ const Word = () => {
     }
   }
 
+  function convertPartOfSpeech(partOfSpeech) {
+    let convertedString = "";
+    if (!partOfSpeech) {
+      return convertedString;
+    }
+    const values = Object.values(partOfSpeechShortForm);
+
+    function getKeyByValue(object, value) {
+      return Object.keys(object).find((key) => object[key] === value);
+    }
+
+    values.forEach((value) => {
+      if (value.some((v) => partOfSpeech.toLowerCase().includes(v))) {
+        convertedString = getKeyByValue(partOfSpeechShortForm, value);
+      }
+    });
+
+    return convertedString;
+  }
+
+  function highlightWord(word, string) {
+    if (string.includes(word)) {
+      const regex = new RegExp(`${word}`);
+      return string.replace(
+        regex,
+        `<span class="higlighted-word">${word}</span>`
+      );
+    }
+  }
+
+  const playWordAudio = () => {
+    if (!phonetics[0].audio) return;
+    wordAudio.current.play();
+  };
+
   const fetchWordInfo = (word, targetLang, lang) => {
     setIsWordLoading(true);
     let wordExamplesLocal;
-
+    console.log(word);
     if (word === "") {
       word = "no";
     }
@@ -100,14 +168,12 @@ const Word = () => {
       .then((response) => checkResponse(response))
       .then(function (data) {
         setWordData(data[0]);
+        console.log(data[0]);
 
         getSynonymsAntonyms(data[0]);
 
-        wordExamplesLocal = data[0].meanings.map((item) => {
-          return { wordExample: item.definitions[0].example };
-        });
+        wordExamplesLocal = getWordExamples(wordExamplesLocal, data);
         setWordExamples(wordExamplesLocal);
-
         // Fetch another API
         return fetchTranslation(word, targetLang, lang);
       })
@@ -137,7 +203,7 @@ const Word = () => {
         );
       })
       .then(function (data) {
-        getWordExamples(data);
+        getWordExamplesTranslations(data);
 
         setIsWordLoading(false);
       })
@@ -148,8 +214,10 @@ const Word = () => {
   };
 
   useEffect(() => {
-    fetchWordInfo("fire", targetLang, lang);
-  }, []);
+    if (currentCategoryWords.length > 0) {
+      fetchWordInfo(currentCategoryWords[currentWordIndex], targetLang, lang);
+    }
+  }, [currentWordIndex, currentCategoryWords]);
   const { word, meanings, phonetics } = wordData;
 
   if (isWordLoading) {
@@ -158,18 +226,26 @@ const Word = () => {
 
   return (
     <div className="word">
-      <div className="word__audio-container">
-        <h2>{word}</h2>
+      <MyListBtn className={"word__star"} icon={<AiFillStar />} />
+      <div
+        onClick={playWordAudio}
+        className={`word__audio-container ${phonetics[0].audio && "has-audio"}`}
+      >
+        <h2 className="word__label">{word}</h2>
         <h4 className="word__phonetic">
           {phonetics[0].audio && <MdVolumeUp />}
           {phonetics[0].text}
           {phonetics[0].audio && (
-            <audio controls src={phonetics[0].audio}></audio>
+            <audio ref={wordAudio} src={phonetics[0].audio}></audio>
           )}
         </h4>
       </div>
       <div>
-        <h5 className="word__part-of-speech">{meanings[0].partOfSpeech}</h5>
+        <h5 className="word__part-of-speech">
+          {meanings.map((meaning) => {
+            return `${convertPartOfSpeech(meaning.partOfSpeech)} `;
+          })}
+        </h5>
         <ol className="word__translations">
           {wordTranslations.map((translation, index) => {
             return (
@@ -180,49 +256,59 @@ const Word = () => {
           })}
         </ol>
       </div>
-      {wordExamples && (
-        <div className="word__examples">
-          <h4 className="word__example-label">Examples</h4>
-          {wordExamples.map((wordExample, index) => {
-            return (
-              <div key={index} className="word__example-container">
-                <h4 className="word__example">{wordExample.wordExample}</h4>
-                <h5 className="word__example-translation">
-                  {wordExample.wordExampleTranslation}
-                </h5>
-              </div>
-            );
-          })}
-        </div>
-      )}
-      {wordSynonyms && (
-        <div className="word__synonyms-container">
-          <h4 className="word__synonyms-label">Synonyms</h4>
-          <div className="word__synonyms">
-            {wordSynonyms.map((word, index) => {
+      <div className="word__usage">
+        {wordExamples.length > 0 && (
+          <div className="word__examples">
+            <h4 className="word__example-label">Examples</h4>
+            {wordExamples.map((wordExample, index) => {
               return (
-                <div key={index} className="word__synonym">
-                  {word}
+                <div key={index} className="word__example-container">
+                  <h4
+                    className="word__example"
+                    dangerouslySetInnerHTML={{
+                      __html: wordExample.wordExample,
+                    }}
+                  ></h4>
+                  <h5
+                    className="word__example-translation"
+                    dangerouslySetInnerHTML={{
+                      __html: wordExample.wordExampleTranslation,
+                    }}
+                  ></h5>
                 </div>
               );
             })}
           </div>
+        )}
+        <div className="word__synonyms-antonyms">
+          {wordSynonyms.length > 0 && (
+            <div className="word__synonyms-container">
+              <h4 className="word__synonyms-label">Synonyms</h4>
+              <p className="word__synonyms">
+                {wordSynonyms.map((word, index) => {
+                  if (index === wordSynonyms.length - 1) {
+                    return `${word}`;
+                  }
+                  return `${word}, `;
+                })}
+              </p>
+            </div>
+          )}
+          {wordAntonyms.length > 0 && (
+            <div className="word__antonyms-container">
+              <h4 className="word__antonyms-label">Antonyms</h4>
+              <p className="word__antonyms">
+                {wordAntonyms.map((word, index) => {
+                  if (index === wordAntonyms.length - 1) {
+                    return `${word}`;
+                  }
+                  return `${word}, `;
+                })}
+              </p>
+            </div>
+          )}
         </div>
-      )}
-      {wordAntonyms && (
-        <div className="word__antonyms-container">
-          <h4 className="word__antonyms-label">Antonyms</h4>
-          <div className="word__antonyms">
-            {wordAntonyms.map((word, index) => {
-              return (
-                <div key={index} className="word__antonym">
-                  {word}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
+      </div>
     </div>
   );
 };

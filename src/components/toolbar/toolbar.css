@@ -3,6 +3,12 @@
   align-items: center;
   justify-content: space-between;
   padding: 0.2rem 10rem;
+  width: 100%;
+  background-color: #e0e0e0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 8;
 }
 
 .toolbar button {

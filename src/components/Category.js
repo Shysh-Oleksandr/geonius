@@ -9,7 +9,7 @@ const Category = ({
   openCategory,
 }) => {
   return (
-    <div className="category" onClick={() => openCategory(levelWords, name)}>
+    <div className="category" onClick={() => openCategory(name)}>
       <h4>
         <span className={className}>{icon}</span>
         {secondIcon && <span className={className}>{secondIcon}</span>}

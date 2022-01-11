@@ -6,8 +6,12 @@ import { AiOutlineSearch } from "react-icons/ai";
 import { useGlobalContext } from "./../../context";
 
 const Toolbar = ({ currentCategory, currentCategoryWords }) => {
-  const { isCategoryMenuOpened, setIsCategoryMenuOpened, setIsLangChosen } =
-    useGlobalContext();
+  const {
+    isCategoryMenuOpened,
+    setIsCategoryMenuOpened,
+    setIsLangChosen,
+    currentWordIndex,
+  } = useGlobalContext();
   return (
     <div className="toolbar">
       <button
@@ -23,7 +27,7 @@ const Toolbar = ({ currentCategory, currentCategoryWords }) => {
             {currentCategory ? currentCategory : "Learned"}
           </h4>
           <div className="toolbar__category-words">
-            (1/{currentCategoryWords.length})
+            ({currentWordIndex + 1}/{currentCategoryWords.length})
           </div>
         </div>
       </button>

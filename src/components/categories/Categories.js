@@ -12,6 +12,7 @@ const Categories = () => {
     setIsCategoryMenuOpened,
     currentCategory,
     setCurrentCategory,
+    setCurrentWordIndex,
   } = useGlobalContext();
 
   const ref = useRef();
@@ -38,9 +39,10 @@ const Categories = () => {
     };
   }, [isCategoryMenuOpened]);
 
-  function openCategory(wordsArray, categoryName) {
+  function openCategory(categoryName) {
     setIsCategoryMenuOpened(false);
     setCurrentCategory(categoryName);
+    setCurrentWordIndex(0);
   }
 
   return (

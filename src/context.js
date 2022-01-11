@@ -1,15 +1,14 @@
-import React, { useState, useContext, useEffect } from "react";
-import englishWords from "./resources/languages/english";
+import React, { useContext, useEffect, useState } from "react";
+import langs from "./resources/langData";
 import levelsData from "./resources/levelsData";
 import myListsData from "./resources/myListsData";
-import langs from "./resources/langData";
 
 const AppContext = React.createContext();
 
 const AppProvider = ({ children }) => {
   const [levels, setLevels] = useState(levelsData);
   const [isLangChosen, setIsLangChosen] = useState(false);
-  const [words, setWords] = useState(englishWords);
+  const [words, setWords] = useState([]);
   const [lang, setLang] = useState("en");
   const [loading, setLoading] = useState(false);
   const [targetLang, setTargetLang] = useState("es");
@@ -18,6 +17,7 @@ const AppProvider = ({ children }) => {
   const [currentCategoryWords, setCurrentCategoryWords] = useState([]);
   const [currentList, setCurrentList] = useState(null);
   const [isCategoryMenuOpened, setIsCategoryMenuOpened] = useState(true);
+  const [currentWordIndex, setCurrentWordIndex] = useState(0);
   // const [searchTerm, setSearchTerm] = useState("a");
 
   const selectCurrentLanguage = (event) => {
@@ -26,9 +26,12 @@ const AppProvider = ({ children }) => {
   };
 
   const chooseLang = (lang) => {
-    setIsLangChosen(true);
+    setIsCategoryMenuOpened(true);
     setTargetLang(lang.langCode);
+    setCurrentCategory(null);
+    setIsLangChosen(true);
     setWords(lang.langWords);
+    setCurrentCategoryWords([]);
   };
 
   const levelsByWords = levels.map((level) => {
@@ -99,6 +102,8 @@ const AppProvider = ({ children }) => {
         currLangName,
         currentCategoryWords,
         isCategoryMenuOpened,
+        currentWordIndex,
+        setCurrentWordIndex,
         setLoading,
         setIsLangChosen,
         setCurrentCategory,

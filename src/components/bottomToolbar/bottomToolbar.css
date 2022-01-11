@@ -1,0 +1,59 @@
+.bottom-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 10rem 1rem;
+  width: 100%;
+  background-color: #fff;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 8;
+}
+
+.my-list-btn:not(.word__star) {
+  line-height: 1.2rem;
+  margin: 0 2rem;
+  font-size: 1.2rem;
+  background-color: #e5e5e5;
+  color: #fff;
+  border-radius: 0.5rem;
+  padding: 0.35rem 0.4rem;
+  vertical-align: bottom;
+
+  transition: all 0.3s ease-in-out;
+}
+
+.bottom-toolbar__unknown-icon {
+  font-size: 1rem;
+  padding: 0.42rem 0.5rem;
+}
+
+.bottom-toolbar__learned-icon:hover,
+.bottom-toolbar__learned-icon.active {
+  background-color: rgb(68, 241, 45);
+}
+
+.bottom-toolbar__unknown-icon:hover,
+.bottom-toolbar__unknown-icon.active {
+  background-color: rgb(231, 78, 78);
+}
+
+.bottom-toolbar__uncertain-icon:hover,
+.bottom-toolbar__uncertain-icon.active {
+  background-color: rgb(245, 241, 19);
+}
+
+.bottom-toolbar__arrow {
+  color: #535353;
+  font-size: 3rem;
+  line-height: 2rem;
+  padding: 0 0.8rem;
+  border-radius: 1.5rem;
+  background-color: transparent;
+  transition: all 0.3s ease-in-out;
+}
+
+.bottom-toolbar__arrow:hover {
+  background-color: #f4f6f6;
+}

@@ -4,6 +4,7 @@ import Toolbar from "./components/toolbar/Toolbar";
 import { useGlobalContext } from "./context";
 import "./styles.css";
 import WordsLearning from "./components/wordsLearning/WordsLearning";
+import BottomToolbar from "./components/bottomToolbar/BottomToolbar";
 
 function App() {
   const {
@@ -33,6 +34,7 @@ function App() {
         currentCategory={currentCategory}
         currentCategoryWords={currentCategoryWords}
       />
+      <BottomToolbar currentCategoryWords={currentCategoryWords} />
       {isCategoryMenuOpened && <Categories />}
       <WordsLearning />
     </div>

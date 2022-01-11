@@ -1,0 +1,169 @@
+.word {
+  padding: 2rem 0;
+  margin: 0 10rem;
+  text-align: center;
+  position: relative;
+}
+
+.word__star {
+  position: absolute;
+  background-color: transparent;
+  top: 0;
+  left: 3.5rem;
+  z-index: 4;
+  font-size: 2.2rem;
+  color: #9b9b9b;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.word__star:hover {
+  color: #30519b;
+}
+
+.word__label {
+  color: #30519b;
+  font-weight: bold;
+  font-size: 3.5rem;
+  letter-spacing: 5px;
+  text-transform: lowercase;
+  transition: all 0.2s ease;
+
+  line-height: 4rem;
+}
+
+.word__label::first-letter {
+  text-transform: capitalize;
+}
+.word__audio-container {
+  margin-bottom: 1.3rem;
+}
+
+.word__audio-container.has-audio:hover .word__label,
+.word__audio-container.has-audio:hover .word__phonetic {
+  color: #22cff9;
+}
+
+.word__audio-container.has-audio {
+  cursor: pointer;
+}
+.word__phonetic {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+
+  font-size: 1.3rem;
+  color: #b0b0b0;
+  margin-top: 0.5rem;
+}
+
+.word__part-of-speech {
+  font-size: 1.4rem;
+  color: #b0b0b0;
+  margin-bottom: 1.4rem;
+}
+
+.word__translations {
+  list-style: none;
+  counter-reset: numList;
+  display: inline-block;
+  margin-left: 2.4rem;
+  margin-bottom: 3rem;
+}
+
+.word__translations li {
+  margin-bottom: 0.8rem;
+  position: relative;
+  font-size: 1.3rem;
+  color: #212121;
+  text-align: left;
+}
+.word__translations li:before {
+  counter-increment: numList;
+  content: counter(numList);
+
+  position: absolute;
+  left: -30px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  font: bold 0.8rem sans-serif;
+  text-align: center;
+  color: #fff;
+  line-height: 1.3rem;
+
+  width: 1.3rem;
+  height: 1.3rem;
+  background: #30519b;
+
+  -moz-border-radius: 999px;
+  border-radius: 999px;
+}
+
+.word__examples {
+  padding: 0 1rem;
+  flex: 1;
+}
+
+.word__synonyms-antonyms {
+  flex: 1;
+}
+
+.word__example-label,
+.word__antonyms-label,
+.word__synonyms-label {
+  color: #7e7e7e;
+  background-color: #e0e0e0;
+  border-radius: 0.65rem;
+  font-size: 1.3rem;
+  font-weight: 700;
+  display: block;
+  max-width: 125px;
+
+  padding: 0.3rem 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.word__example-container {
+  margin-bottom: 1rem;
+}
+
+.word__example {
+  color: #212121;
+  font-size: 1.4rem;
+  margin-bottom: 0.3rem;
+  text-align: left;
+}
+
+.word__example .higlighted-word {
+  color: #6bd9f6;
+}
+
+.word__example::first-letter,
+.word__example-translation::first-letter {
+  text-transform: capitalize;
+}
+
+.word__example-translation {
+  text-align: left;
+  color: #828282;
+  font-size: 1.2rem;
+}
+
+.word__usage {
+  display: flex;
+  justify-content: center;
+}
+
+.word__synonyms-container {
+  margin-bottom: 1.5rem;
+}
+
+.word__synonyms,
+.word__antonyms {
+  font-size: 1.2rem;
+  text-align: left;
+  line-height: 1.5rem;
+  color: #212121;
+}
