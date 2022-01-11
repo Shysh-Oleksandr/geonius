@@ -26,7 +26,7 @@ const myListsData = [
     listName: "Uncertain",
     className: "uncertain-icon",
     icon: <CgShapeTriangle />,
-    listWordsArray: ["de", "frau", "le"],
+    listWordsArray: [],
   },
   {
     listIndex: 3,

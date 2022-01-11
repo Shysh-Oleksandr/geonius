@@ -15,6 +15,7 @@ const ACTIONS = {
   DECREMENT: "decrement",
   RESET: "reset",
   ADD_TO_LIST: "add-to-list",
+  CHECK_WORD: "check-word",
 };
 
 function reducer(state, action) {
@@ -35,6 +36,17 @@ function reducer(state, action) {
       return { ...state, currentWordIndex: state.currentWordIndex - 1 };
     case ACTIONS.RESET:
       return { ...state, currentWordIndex: 0 };
+    case ACTIONS.CHECK_WORD:
+      action.payload.myLists.map((myList) => {
+        myList.className = myList.className.replace(" active", "");
+
+        if (myList.listWordsArray.includes(action.payload.currentWord)) {
+          console.log(myList);
+          myList.className += " active";
+        }
+      });
+      return { ...state };
+
     case ACTIONS.ADD_TO_LIST:
       // Find the current list(that was clicked).
       let currentList = action.payload.myLists.find(
@@ -58,6 +70,8 @@ function reducer(state, action) {
       currentList.listWordsArray.unshift(action.payload.currentWord);
       currentList.className += " active";
 
+      console.log(action.payload.myLists);
+
       return { ...state, myLists: action.payload.myLists };
     default:
       return state;
@@ -78,13 +92,18 @@ const BottomToolbar = ({ currentCategoryWords }) => {
   });
 
   useEffect(() => {
-    console.log(state.myLists);
     setCurrentWordIndex(state.currentWordIndex);
-  }, [state]);
+    dispatch({
+      type: ACTIONS.CHECK_WORD,
+      payload: {
+        currentWord: currentCategoryWords[state.currentWordIndex],
+        myLists: state.myLists,
+      },
+    });
+  }, [state.currentWordIndex]);
 
   useEffect(() => {
     dispatch({ type: ACTIONS.RESET });
-    console.log(state.currentWordIndex);
   }, [currentCategory]);
 
   return (
