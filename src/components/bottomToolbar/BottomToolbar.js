@@ -66,35 +66,13 @@ function reducer(state, action) {
       }
       return { ...state };
 
-    case ACTIONS.ADD_TO_LIST:
-      // Find the current list(that was clicked).
-      let currentList = action.payload.myLists.find(
-        (myList) => myList.listName === action.payload.listName
-      );
-
-      // If the active list was clicked again, return unchanged state.
-      if (currentList.className.includes("active")) {
-        return state;
-      }
-
-      // Remove the current word and active class from each list.
-      action.payload.myLists.map((myList) => {
-        myList.className = myList.className.replace(" active", "");
-        myList.listWordsArray = myList.listWordsArray.filter(
-          (word) => word !== action.payload.currentWord
-        );
-      });
-
-      // Add the current word to the current list and make current list btn active.
-      currentList.listWordsArray.unshift(action.payload.currentWord);
-      currentList.className += " active";
-
-      console.log(action.payload.myLists);
-
-      return { ...state, myLists: action.payload.myLists };
     default:
       return state;
   }
+}
+
+function getListData(listName) {
+  return myListsData.find((list) => list.listName === listName);
 }
 
 const BottomToolbar = ({ currentCategoryWords }) => {
@@ -105,35 +83,53 @@ const BottomToolbar = ({ currentCategoryWords }) => {
     listsNames.includes(myList.listName)
   );
 
-  const starredListData = myListsData.find(
-    (list) => list.listName === "Starred"
-  );
+  const starredListData = getListData("Starred");
+
+  const unknownUncertainListData = getListData("Unknown + Uncertain");
   const [starredList, setStarredList] = useState(starredListData);
+  const [myLists, setMyLists] = useState(myListsArray);
+  const [unknownUncertainList, setUnknownUncertainList] = useState(
+    unknownUncertainListData
+  );
   const [starred, setStarred] = useState(false);
 
   const [state, dispatch] = useReducer(reducer, {
     currentWordIndex: 0,
     myLists: myListsArray,
+    unknownUncertainList: unknownUncertainListData,
   });
+
+  const currentWord = currentCategoryWords[state.currentWordIndex];
 
   useEffect(() => {
     setCurrentWordIndex(state.currentWordIndex);
-    dispatch({
-      type: ACTIONS.CHECK_WORD,
-      payload: {
-        currentWord: currentCategoryWords[state.currentWordIndex],
-        myLists: state.myLists,
-        starredList: starredList,
-        setStarred: setStarred,
-      },
-    });
-  }, [state.currentWordIndex]);
+    console.log(state.currentWordIndex, currentWord);
+    console.log(currentCategoryWords);
+    checkListsForWord();
+  }, [state.currentWordIndex, currentCategoryWords]);
 
   useEffect(() => {
     dispatch({ type: ACTIONS.RESET });
   }, [currentCategory]);
 
-  const handleStarredClick = (starredListArray, currentWord) => {
+  function checkListsForWord() {
+    // For my lists.
+    myLists.map((myList) => {
+      // Remove active from each one.
+      myList.className = myList.className.replace(" active", "");
+      // If the word is in a list, make the list active.
+      if (myList.listWordsArray.includes(currentWord)) {
+        myList.className += " active";
+      }
+    });
+    // For the starred list.
+    // If the word is in starred list then make starred active. Otherwise removes active.
+    starredList.listWordsArray.includes(currentWord)
+      ? setStarred(true)
+      : setStarred(false);
+  }
+
+  const handleStarredClick = (starredListArray) => {
     if (!starred) {
       starredListArray.listWordsArray.unshift(currentWord);
     } else {
@@ -145,17 +141,42 @@ const BottomToolbar = ({ currentCategoryWords }) => {
     setStarredList(starredListArray);
   };
 
+  const handleAddToList = (listName) => {
+    // Find the current list(that was clicked).
+    let currentList = myLists.find((myList) => myList.listName === listName);
+
+    // If the active list was clicked again, return unchanged state.
+    if (currentList.className.includes("active")) {
+      console.log("alre");
+      return state;
+    }
+    // Remove the current word and active class from each list.
+    myLists.map((myList) => {
+      myList.className = myList.className.replace(" active", "");
+      myList.listWordsArray = myList.listWordsArray.filter(
+        (word) => word !== currentWord
+      );
+    });
+    // Add the current word to the current list and make current list btn active.
+    currentList.listWordsArray.unshift(currentWord);
+    currentList.className += " active";
+
+    let unknownUncertainListArray = [
+      ...getListData("Unknown").listWordsArray,
+      ...getListData("Uncertain").listWordsArray,
+    ];
+
+    setUnknownUncertainList((prev) => {
+      return { ...prev, listWordsArray: unknownUncertainListArray };
+    });
+  };
+
   return (
     <div className="bottom-toolbar">
       <MyListBtn
         className={`word__star ${starred && "active"}`}
         icon={<AiFillStar />}
-        onClick={() =>
-          handleStarredClick(
-            starredList,
-            currentCategoryWords[state.currentWordIndex]
-          )
-        }
+        onClick={() => handleStarredClick(starredList)}
       />
 
       <button
@@ -172,16 +193,7 @@ const BottomToolbar = ({ currentCategoryWords }) => {
               key={index}
               className={`bottom-toolbar__${myList.className}`}
               icon={myList.icon}
-              onClick={() =>
-                dispatch({
-                  type: ACTIONS.ADD_TO_LIST,
-                  payload: {
-                    currentWord: currentCategoryWords[state.currentWordIndex],
-                    listName: myList.listName,
-                    myLists: state.myLists,
-                  },
-                })
-              }
+              onClick={() => handleAddToList(myList.listName)}
             />
           );
         })}
