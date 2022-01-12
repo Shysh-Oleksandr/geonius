@@ -2,10 +2,8 @@ import { React, useEffect, useRef } from "react";
 import { MdVolumeUp } from "react-icons/md";
 import { useState } from "react/cjs/react.development";
 import { useGlobalContext } from "../../context";
-import "./word.css";
-import { AiFillStar } from "react-icons/ai";
 import partOfSpeechShortForm from "./partOfSpeechData";
-import MyListBtn from "./../MyListBtn";
+import "./word.css";
 
 const Word = ({ currentWordIndex, currentCategoryWords }) => {
   const wordAudio = useRef(null);
@@ -159,7 +157,7 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
   const fetchWordInfo = (word, targetLang, lang) => {
     setIsWordLoading(true);
     let wordExamplesLocal;
-    console.log(word);
+    // console.log(word);
     if (word === "") {
       word = "no";
     }
@@ -168,7 +166,7 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
       .then((response) => checkResponse(response))
       .then(function (data) {
         setWordData(data[0]);
-        console.log(data[0]);
+        // console.log(data[0]);
 
         getSynonymsAntonyms(data[0]);
 
@@ -226,7 +224,6 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
 
   return (
     <div className="word">
-      <MyListBtn className={"word__star"} icon={<AiFillStar />} />
       <div
         onClick={playWordAudio}
         className={`word__audio-container ${phonetics[0].audio && "has-audio"}`}

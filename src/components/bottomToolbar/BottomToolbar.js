@@ -9,12 +9,15 @@ import {
 } from "../categories/imports";
 import { useGlobalContext } from "./../../context";
 import myListsData from "./../../resources/myListsData";
+import { AiFillStar } from "react-icons/ai";
+import { useState } from "react/cjs/react.development";
 
 const ACTIONS = {
   INCREMENT: "increment",
   DECREMENT: "decrement",
   RESET: "reset",
   ADD_TO_LIST: "add-to-list",
+  STARRED: "starred",
   CHECK_WORD: "check-word",
 };
 
@@ -37,14 +40,30 @@ function reducer(state, action) {
     case ACTIONS.RESET:
       return { ...state, currentWordIndex: 0 };
     case ACTIONS.CHECK_WORD:
+      // For my lists.
       action.payload.myLists.map((myList) => {
+        // Remove active from each one.
         myList.className = myList.className.replace(" active", "");
 
+        // If the word is in a list, make the list active.
         if (myList.listWordsArray.includes(action.payload.currentWord)) {
-          console.log(myList);
           myList.className += " active";
         }
       });
+
+      // For the starred list.
+      // If the word is in starred list then make starred active.
+      if (
+        action.payload.starredList.listWordsArray.includes(
+          action.payload.currentWord
+        )
+      ) {
+        action.payload.setStarred(true);
+      }
+      // Otherwise, remove active.
+      else {
+        action.payload.setStarred(false);
+      }
       return { ...state };
 
     case ACTIONS.ADD_TO_LIST:
@@ -86,6 +105,12 @@ const BottomToolbar = ({ currentCategoryWords }) => {
     listsNames.includes(myList.listName)
   );
 
+  const starredListData = myListsData.find(
+    (list) => list.listName === "Starred"
+  );
+  const [starredList, setStarredList] = useState(starredListData);
+  const [starred, setStarred] = useState(false);
+
   const [state, dispatch] = useReducer(reducer, {
     currentWordIndex: 0,
     myLists: myListsArray,
@@ -98,6 +123,8 @@ const BottomToolbar = ({ currentCategoryWords }) => {
       payload: {
         currentWord: currentCategoryWords[state.currentWordIndex],
         myLists: state.myLists,
+        starredList: starredList,
+        setStarred: setStarred,
       },
     });
   }, [state.currentWordIndex]);
@@ -106,8 +133,31 @@ const BottomToolbar = ({ currentCategoryWords }) => {
     dispatch({ type: ACTIONS.RESET });
   }, [currentCategory]);
 
+  const handleStarredClick = (starredListArray, currentWord) => {
+    if (!starred) {
+      starredListArray.listWordsArray.unshift(currentWord);
+    } else {
+      starredListArray.listWordsArray = starredListArray.listWordsArray.filter(
+        (word) => word !== currentWord
+      );
+    }
+    setStarred(!starred);
+    setStarredList(starredListArray);
+  };
+
   return (
     <div className="bottom-toolbar">
+      <MyListBtn
+        className={`word__star ${starred && "active"}`}
+        icon={<AiFillStar />}
+        onClick={() =>
+          handleStarredClick(
+            starredList,
+            currentCategoryWords[state.currentWordIndex]
+          )
+        }
+      />
+
       <button
         type="button"
         className="bottom-toolbar__arrow-back bottom-toolbar__arrow"

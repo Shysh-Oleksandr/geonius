@@ -37,10 +37,11 @@ const myListsData = [
   },
   {
     listIndex: 4,
-    listName: "Favorites",
+    listName: "Starred",
     className: "favorites-icon",
     icon: <AiFillStar />,
     listWordsArray: [],
+    starred: false,
   },
 ];
 
