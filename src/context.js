@@ -18,6 +18,7 @@ const AppProvider = ({ children }) => {
   const [currentList, setCurrentList] = useState(null);
   const [isCategoryMenuOpened, setIsCategoryMenuOpened] = useState(true);
   const [isCategoryCompleted, setIsCategoryCompleted] = useState(false);
+  const [isWordListOpened, setIsWordListOpened] = useState(false);
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   // const [searchTerm, setSearchTerm] = useState("a");
 
@@ -105,7 +106,9 @@ const AppProvider = ({ children }) => {
         isCategoryMenuOpened,
         isCategoryCompleted,
         currentWordIndex,
+        isWordListOpened,
         setIsCategoryCompleted,
+        setIsWordListOpened,
         setCurrentWordIndex,
         setLoading,
         setIsLangChosen,

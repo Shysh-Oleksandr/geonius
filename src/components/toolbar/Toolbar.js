@@ -7,17 +7,17 @@ import { useGlobalContext } from "./../../context";
 
 const Toolbar = ({ currentCategory, currentCategoryWords }) => {
   const {
-    isCategoryMenuOpened,
     setIsCategoryMenuOpened,
     setIsLangChosen,
     currentWordIndex,
+    setIsWordListOpened,
   } = useGlobalContext();
   return (
     <div className="toolbar">
       <button
         type="button"
         className="toolbar__category"
-        onClick={() => setIsCategoryMenuOpened(!isCategoryMenuOpened)}
+        onClick={() => setIsCategoryMenuOpened(true)}
       >
         <div className="toolbar__category-icon">
           <MdPlayArrow />
@@ -42,7 +42,11 @@ const Toolbar = ({ currentCategory, currentCategoryWords }) => {
         <button type="button" className="toolbar__search">
           <AiOutlineSearch />
         </button>
-        <button type="button" className="toolbar__words-list">
+        <button
+          type="button"
+          className="toolbar__words-list"
+          onClick={() => setIsWordListOpened(true)}
+        >
           <GiHamburgerMenu />
         </button>
         <button type="button" className="toolbar__mode">

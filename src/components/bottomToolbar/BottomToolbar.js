@@ -44,6 +44,7 @@ function getListData(listName) {
 const BottomToolbar = ({ currentCategoryWords }) => {
   const {
     setCurrentWordIndex,
+    currentWordIndex,
     currentCategory,
     setIsCategoryCompleted,
     isCategoryCompleted,
@@ -74,6 +75,10 @@ const BottomToolbar = ({ currentCategoryWords }) => {
     setCurrentWordIndex(state.currentWordIndex);
     checkListsForWord();
   }, [state.currentWordIndex, currentCategoryWords]);
+
+  useEffect(() => {
+    state.currentWordIndex = currentWordIndex;
+  }, [currentWordIndex]);
 
   useEffect(() => {
     if (!isCategoryCompleted) {
