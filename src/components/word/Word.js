@@ -38,7 +38,7 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
           "x-rapidapi-host":
             "translated-mymemory---translation-memory.p.rapidapi.com",
           "x-rapidapi-key":
-            "c875bcdba9msha44d792f019588ap1c8fe9jsn34d1f030a24c",
+            "7b389175f0msh009f4e4a767290bp150759jsn71aaf3158c35",
         },
       }
     );

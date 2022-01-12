@@ -1,33 +1,26 @@
-import React, { useReducer, useEffect } from "react";
+import React, { useEffect, useReducer } from "react";
+import { AiFillStar } from "react-icons/ai";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
-import "./bottomToolbar.css";
-import MyListBtn from "./../MyListBtn";
-import {
-  IoMdCheckmark,
-  CgShapeTriangle,
-  BsQuestionLg,
-} from "../categories/imports";
+import { useState } from "react/cjs/react.development";
 import { useGlobalContext } from "./../../context";
 import myListsData from "./../../resources/myListsData";
-import { AiFillStar } from "react-icons/ai";
-import { useState } from "react/cjs/react.development";
+import MyListBtn from "./../MyListBtn";
+import "./bottomToolbar.css";
 
 const ACTIONS = {
   INCREMENT: "increment",
   DECREMENT: "decrement",
   RESET: "reset",
-  ADD_TO_LIST: "add-to-list",
-  STARRED: "starred",
-  CHECK_WORD: "check-word",
 };
 
 function reducer(state, action) {
   switch (action.type) {
     case ACTIONS.INCREMENT:
       if (
-        state.currentWordIndex === action.payload.currentCategoryWords.length
+        state.currentWordIndex ===
+        action.payload.currentCategoryWords.length - 1
       ) {
-        console.log("modal about ending categ");
+        action.payload.setIsCategoryCompleted(true);
         return state;
       }
 
@@ -49,7 +42,12 @@ function getListData(listName) {
 }
 
 const BottomToolbar = ({ currentCategoryWords }) => {
-  const { setCurrentWordIndex, currentCategory } = useGlobalContext();
+  const {
+    setCurrentWordIndex,
+    currentCategory,
+    setIsCategoryCompleted,
+    isCategoryCompleted,
+  } = useGlobalContext();
 
   const listsNames = ["Unknown", "Uncertain", "Learned"];
   const myListsArray = myListsData.filter((myList) =>
@@ -68,8 +66,6 @@ const BottomToolbar = ({ currentCategoryWords }) => {
 
   const [state, dispatch] = useReducer(reducer, {
     currentWordIndex: 0,
-    myLists: myListsArray,
-    unknownUncertainList: unknownUncertainListData,
   });
 
   const currentWord = currentCategoryWords[state.currentWordIndex];
@@ -80,8 +76,10 @@ const BottomToolbar = ({ currentCategoryWords }) => {
   }, [state.currentWordIndex, currentCategoryWords]);
 
   useEffect(() => {
-    dispatch({ type: ACTIONS.RESET });
-  }, [currentCategory]);
+    if (!isCategoryCompleted) {
+      dispatch({ type: ACTIONS.RESET });
+    }
+  }, [currentCategory, isCategoryCompleted]);
 
   function checkListsForWord() {
     // For my lists.
@@ -160,7 +158,7 @@ const BottomToolbar = ({ currentCategoryWords }) => {
         <IoIosArrowBack />
       </button>
       <div className="bottom-toolbar__my-list-btns">
-        {state.myLists.map((myList, index) => {
+        {myLists.map((myList, index) => {
           return (
             <MyListBtn
               key={index}
@@ -178,7 +176,10 @@ const BottomToolbar = ({ currentCategoryWords }) => {
         onClick={() =>
           dispatch({
             type: ACTIONS.INCREMENT,
-            payload: { currentCategoryWords: currentCategoryWords },
+            payload: {
+              currentCategoryWords: currentCategoryWords,
+              setIsCategoryCompleted: setIsCategoryCompleted,
+            },
           })
         }
       >

@@ -46,7 +46,7 @@ const Categories = () => {
   }
 
   return (
-    <div className={`categories__wrapper ${isCategoryMenuOpened && "active"}`}>
+    <div className={`categories__wrapper`}>
       <div className="categories" ref={ref}>
         <div className="categories__my-lists">
           <h3>

@@ -5,6 +5,7 @@ import { useGlobalContext } from "./context";
 import "./styles.css";
 import WordsLearning from "./components/wordsLearning/WordsLearning";
 import BottomToolbar from "./components/bottomToolbar/BottomToolbar";
+import CategoryCompletedModal from "./components/categoryCompletedModal/CategoryCompletedModal";
 
 function App() {
   const {
@@ -13,6 +14,7 @@ function App() {
     isCategoryMenuOpened,
     currentCategory,
     currentCategoryWords,
+    isCategoryCompleted,
   } = useGlobalContext();
 
   if (loading) {
@@ -37,6 +39,7 @@ function App() {
       <BottomToolbar currentCategoryWords={currentCategoryWords} />
       {isCategoryMenuOpened && <Categories />}
       <WordsLearning />
+      {isCategoryCompleted && <CategoryCompletedModal />}
     </div>
   );
 }
