@@ -39,33 +39,6 @@ function reducer(state, action) {
       return { ...state, currentWordIndex: state.currentWordIndex - 1 };
     case ACTIONS.RESET:
       return { ...state, currentWordIndex: 0 };
-    case ACTIONS.CHECK_WORD:
-      // For my lists.
-      action.payload.myLists.map((myList) => {
-        // Remove active from each one.
-        myList.className = myList.className.replace(" active", "");
-
-        // If the word is in a list, make the list active.
-        if (myList.listWordsArray.includes(action.payload.currentWord)) {
-          myList.className += " active";
-        }
-      });
-
-      // For the starred list.
-      // If the word is in starred list then make starred active.
-      if (
-        action.payload.starredList.listWordsArray.includes(
-          action.payload.currentWord
-        )
-      ) {
-        action.payload.setStarred(true);
-      }
-      // Otherwise, remove active.
-      else {
-        action.payload.setStarred(false);
-      }
-      return { ...state };
-
     default:
       return state;
   }
@@ -103,8 +76,6 @@ const BottomToolbar = ({ currentCategoryWords }) => {
 
   useEffect(() => {
     setCurrentWordIndex(state.currentWordIndex);
-    console.log(state.currentWordIndex, currentWord);
-    console.log(currentCategoryWords);
     checkListsForWord();
   }, [state.currentWordIndex, currentCategoryWords]);
 
@@ -145,22 +116,24 @@ const BottomToolbar = ({ currentCategoryWords }) => {
     // Find the current list(that was clicked).
     let currentList = myLists.find((myList) => myList.listName === listName);
 
+    // Remove the current word and active class from each list.
+    function clearMyLists() {
+      myLists.map((myList) => {
+        myList.className = myList.className.replace(" active", "");
+        myList.listWordsArray = myList.listWordsArray.filter(
+          (word) => word !== currentWord
+        );
+      });
+    }
     // If the active list was clicked again, return unchanged state.
     if (currentList.className.includes("active")) {
-      console.log("alre");
-      return state;
+      clearMyLists();
+    } else {
+      clearMyLists();
+      // Add the current word to the current list and make current list btn active.
+      currentList.listWordsArray.unshift(currentWord);
+      currentList.className += " active";
     }
-    // Remove the current word and active class from each list.
-    myLists.map((myList) => {
-      myList.className = myList.className.replace(" active", "");
-      myList.listWordsArray = myList.listWordsArray.filter(
-        (word) => word !== currentWord
-      );
-    });
-    // Add the current word to the current list and make current list btn active.
-    currentList.listWordsArray.unshift(currentWord);
-    currentList.className += " active";
-
     let unknownUncertainListArray = [
       ...getListData("Unknown").listWordsArray,
       ...getListData("Uncertain").listWordsArray,
