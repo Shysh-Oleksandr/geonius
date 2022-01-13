@@ -14,6 +14,7 @@ const Categories = () => {
     setCurrentWordIndex,
     getCategoryWords,
     myLists,
+    showAlert,
   } = useGlobalContext();
 
   const ref = useRef();
@@ -43,9 +44,9 @@ const Categories = () => {
   function openCategory(categoryName) {
     let categoryWords = getCategoryWords(categoryName);
     if (categoryWords.length === 0) {
-      // Show Modal
-      console.log("modal aobut zero words in catefg");
+      showAlert(true, "There is no word in this list.");
     } else {
+      showAlert(false);
       setIsCategoryMenuOpened(false);
       setCurrentCategory(categoryName);
       setCurrentWordIndex(0);
@@ -96,7 +97,11 @@ const Categories = () => {
         </div>
         <button
           className="categories__cancel-btn"
-          onClick={() => currentCategory && setIsCategoryMenuOpened(false)}
+          onClick={() => {
+            currentCategory
+              ? setIsCategoryMenuOpened(false)
+              : showAlert(true, "Choose a category, please.");
+          }}
         >
           Cancel
         </button>

@@ -40,6 +40,8 @@ const AppProvider = ({ children }) => {
   const [unknownUncertainList, setUnknownUncertainList] = useState(
     unknownUncertainListData
   );
+  const [alert, setAlert] = useState({ show: false, msg: "" });
+
   // const [searchTerm, setSearchTerm] = useState("a");
 
   const selectCurrentLanguage = (event) => {
@@ -110,6 +112,10 @@ const AppProvider = ({ children }) => {
 
   let currLangName = getLangName(lang);
 
+  const showAlert = (show = false, msg = "") => {
+    setAlert({ show, msg });
+  };
+
   useEffect(() => {
     if (isLangChosen) {
       defineWordsByLevel();
@@ -144,6 +150,9 @@ const AppProvider = ({ children }) => {
         myAddedLists,
         isModeMenuOpened,
         currentMode,
+        alert,
+        showAlert,
+        setAlert,
         getCategoryWords,
         setCurrentMode,
         setIsModeMenuOpened,

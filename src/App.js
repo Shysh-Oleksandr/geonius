@@ -8,6 +8,7 @@ import BottomToolbar from "./components/bottomToolbar/BottomToolbar";
 import CategoryCompletedModal from "./components/categoryCompletedModal/CategoryCompletedModal";
 import WordList from "./components/wordList/WordList";
 import ModeMenu from "./components/modeMenu/ModeMenu";
+import Alert from "./components/alert/Alert";
 
 function App() {
   const {
@@ -18,7 +19,9 @@ function App() {
     currentCategoryWords,
     isWordListOpened,
     isCategoryCompleted,
+    alert,
     isModeMenuOpened,
+    showAlert,
   } = useGlobalContext();
 
   if (loading) {
@@ -40,6 +43,10 @@ function App() {
         currentCategory={currentCategory}
         currentCategoryWords={currentCategoryWords}
       />
+      {alert.show && (
+        <Alert {...alert} removeAlert={showAlert} /> // dependency
+      )}
+
       {isCategoryMenuOpened && <Categories />}
       {isWordListOpened && (
         <WordList currentCategoryWords={currentCategoryWords} />

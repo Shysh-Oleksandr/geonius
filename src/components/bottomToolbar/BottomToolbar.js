@@ -58,6 +58,7 @@ const BottomToolbar = ({ currentCategoryWords }) => {
     unknownUncertainList,
     setUnknownUncertainList,
     currentMode,
+    showAlert,
   } = useGlobalContext();
 
   const [starred, setStarred] = useState(false);
@@ -153,10 +154,12 @@ const BottomToolbar = ({ currentCategoryWords }) => {
   const handleStarredClick = (starredListArray) => {
     if (!starred) {
       starredListArray.listWordsArray.unshift(currentWord);
+      showAlert(true, "Saved to Starred");
     } else {
       starredListArray.listWordsArray = starredListArray.listWordsArray.filter(
         (word) => word !== currentWord
       );
+      showAlert(true, "Removed from Starred");
     }
     setStarred(!starred);
     setStarredList(starredListArray);
@@ -180,11 +183,14 @@ const BottomToolbar = ({ currentCategoryWords }) => {
     // If the active list was clicked again, return unchanged state.
     if (currentList.className.includes("active")) {
       clearMyLists();
+      showAlert(true, `Removed from "${listName.toLowerCase()}" words list.`);
     } else {
       clearMyLists();
       // Add the current word to the current list and make current list btn active.
       currentList.listWordsArray.unshift(currentWord);
       currentList.className += " active";
+
+      showAlert(true, `Added to "${listName.toLowerCase()}" words list.`);
     }
     let unknownUncertainListArray = [
       ...getListData("Unknown").listWordsArray,
