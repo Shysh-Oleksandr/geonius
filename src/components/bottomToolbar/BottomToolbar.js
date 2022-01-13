@@ -1,8 +1,12 @@
-import React, { useEffect, useReducer } from "react";
+import React, { useEffect, useReducer, useRef } from "react";
 import { AiFillStar } from "react-icons/ai";
-import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import {
+  IoIosArrowBack,
+  IoIosArrowDown,
+  IoIosArrowForward,
+} from "react-icons/io";
 import { useState } from "react/cjs/react.development";
-import { useGlobalContext } from "./../../context";
+import { MODES, useGlobalContext } from "./../../context";
 import MyListBtn from "./../MyListBtn";
 import "./bottomToolbar.css";
 
@@ -53,9 +57,13 @@ const BottomToolbar = ({ currentCategoryWords }) => {
     setMyLists,
     unknownUncertainList,
     setUnknownUncertainList,
+    currentMode,
   } = useGlobalContext();
 
   const [starred, setStarred] = useState(false);
+  const [isSlided, setIsSlided] = useState(true);
+
+  const slideRef = useRef();
 
   const [state, dispatch] = useReducer(reducer, {
     currentWordIndex: 0,
@@ -66,9 +74,10 @@ const BottomToolbar = ({ currentCategoryWords }) => {
 
   useEffect(() => {
     if (state.currentWordIndex !== currentWordIndex) {
-      console.log(state.currentWordIndex, currentWordIndex);
+      // console.log(state.currentWordIndex, currentWordIndex);
       setCurrentWordIndex(state.currentWordIndex);
-      console.log("eff");
+      // console.log("eff");
+      if (currentMode === MODES.SLIDE) setIsSlided(true);
     }
     checkListsForWord();
   }, [state.currentWordIndex, currentCategoryWords]);
@@ -109,7 +118,7 @@ const BottomToolbar = ({ currentCategoryWords }) => {
   }, [unknownUncertainList]);
 
   useEffect(() => {
-    console.log("curr w i eff");
+    // console.log("curr w i eff");
     state.currentWordIndex = currentWordIndex;
   }, [currentWordIndex]);
 
@@ -187,8 +196,27 @@ const BottomToolbar = ({ currentCategoryWords }) => {
     });
   };
 
+  function handleSlide() {
+    setIsSlided(false);
+  }
+
   return (
-    <div className="bottom-toolbar">
+    <div
+      className={`bottom-toolbar ${
+        currentMode === MODES.SLIDE && isSlided ? "slide-mode" : ""
+      }`}
+    >
+      <div
+        onClick={handleSlide}
+        ref={slideRef}
+        className={`word__slide ${
+          currentMode !== MODES.SLIDE || !isSlided ? "hidden" : ""
+        }`}
+      >
+        <span className="word__slide-arrow">
+          <IoIosArrowDown />
+        </span>
+      </div>
       <MyListBtn
         className={`word__star ${starred && "active"}`}
         icon={<AiFillStar />}

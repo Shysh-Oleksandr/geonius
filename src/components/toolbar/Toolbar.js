@@ -11,6 +11,7 @@ const Toolbar = ({ currentCategory, currentCategoryWords }) => {
     setIsCategoryMenuOpened,
     setIsLangChosen,
     currentWordIndex,
+    setIsModeMenuOpened,
     lang,
     setIsWordListOpened,
     targetLang,
@@ -70,7 +71,11 @@ const Toolbar = ({ currentCategory, currentCategoryWords }) => {
         >
           <GiHamburgerMenu />
         </button>
-        <button type="button" className="toolbar__mode">
+        <button
+          type="button"
+          className="toolbar__mode"
+          onClick={() => setIsModeMenuOpened(true)}
+        >
           <MdChromeReaderMode />
         </button>
       </div>

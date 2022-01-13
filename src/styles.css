@@ -38,6 +38,7 @@ body {
   -ms-text-size-adjust: 100%;
   -moz-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
+  overflow: hidden;
 }
 
 input,
@@ -81,6 +82,10 @@ h5,
 h6 {
   font-size: inherit;
   font-weight: 400;
+}
+
+#root {
+  background: #e0e0e0;
 }
 
 .language-selection {

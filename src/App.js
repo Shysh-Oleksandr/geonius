@@ -7,6 +7,7 @@ import WordsLearning from "./components/wordsLearning/WordsLearning";
 import BottomToolbar from "./components/bottomToolbar/BottomToolbar";
 import CategoryCompletedModal from "./components/categoryCompletedModal/CategoryCompletedModal";
 import WordList from "./components/wordList/WordList";
+import ModeMenu from "./components/modeMenu/ModeMenu";
 
 function App() {
   const {
@@ -17,6 +18,7 @@ function App() {
     currentCategoryWords,
     isWordListOpened,
     isCategoryCompleted,
+    isModeMenuOpened,
   } = useGlobalContext();
 
   if (loading) {
@@ -42,6 +44,7 @@ function App() {
       {isWordListOpened && (
         <WordList currentCategoryWords={currentCategoryWords} />
       )}
+      {isModeMenuOpened && <ModeMenu />}
       <WordsLearning />
       {isCategoryCompleted && <CategoryCompletedModal />}
       <BottomToolbar currentCategoryWords={currentCategoryWords} />

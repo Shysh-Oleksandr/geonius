@@ -1,4 +1,5 @@
 import { React, useEffect, useRef } from "react";
+import { IoIosArrowDown } from "react-icons/io";
 import { MdVolumeUp } from "react-icons/md";
 import { useState } from "react/cjs/react.development";
 import { useGlobalContext } from "../../context";
@@ -254,6 +255,7 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
           )}
         </h4>
       </div>
+
       <div>
         <h5 className="word__part-of-speech">
           {meanings.map((meaning) => {

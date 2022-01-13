@@ -4,7 +4,12 @@ import levelsData from "./resources/levelsData";
 import myListsData from "./resources/myListsData";
 
 const AppContext = React.createContext();
-
+export const MODES = {
+  STUDY: "Study",
+  SLIDE: "Slide",
+  QUIZ: "Quiz",
+  ALL: "All (random)",
+};
 const AppProvider = ({ children }) => {
   const starredListData = getListData("Starred");
   const unknownUncertainListData = getListData("Unknown + Uncertain");
@@ -24,9 +29,11 @@ const AppProvider = ({ children }) => {
   const [currentCategory, setCurrentCategory] = useState(null);
   const [currentCategoryWords, setCurrentCategoryWords] = useState([]);
   const [currentList, setCurrentList] = useState(null);
+  const [currentMode, setCurrentMode] = useState(MODES.STUDY);
   const [isCategoryMenuOpened, setIsCategoryMenuOpened] = useState(true);
   const [isCategoryCompleted, setIsCategoryCompleted] = useState(false);
   const [isWordListOpened, setIsWordListOpened] = useState(false);
+  const [isModeMenuOpened, setIsModeMenuOpened] = useState(false);
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [starredList, setStarredList] = useState(starredListData);
   const [myAddedLists, setMyAddedLists] = useState(myListsArray);
@@ -135,7 +142,11 @@ const AppProvider = ({ children }) => {
         starredList,
         unknownUncertainList,
         myAddedLists,
+        isModeMenuOpened,
+        currentMode,
         getCategoryWords,
+        setCurrentMode,
+        setIsModeMenuOpened,
         setIsCategoryCompleted,
         setStarredList,
         setMyLists,

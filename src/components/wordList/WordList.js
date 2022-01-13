@@ -50,7 +50,7 @@ const WordList = ({ currentCategoryWords }) => {
     <div className={`word-list__wrapper`}>
       <div className="word-list" ref={ref}>
         <h3 className="word-list__title">
-          word list ({currentCategoryWords.length})
+          Word list ({currentCategoryWords.length})
         </h3>
         <div className="word-list__words-container" ref={wordsContainerRef}>
           {currentCategoryWords.map((word, index) => {
