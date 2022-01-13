@@ -2,7 +2,6 @@ import { React, useRef, useEffect } from "react";
 import Category from "../Category";
 import { AiFillFolder, BiCategory } from "./imports";
 import { useGlobalContext } from "./../../context";
-import myListsData from "./../../resources/myListsData";
 import "./categories.css";
 
 const Categories = () => {
@@ -13,6 +12,8 @@ const Categories = () => {
     currentCategory,
     setCurrentCategory,
     setCurrentWordIndex,
+    getCategoryWords,
+    myLists,
   } = useGlobalContext();
 
   const ref = useRef();
@@ -40,9 +41,15 @@ const Categories = () => {
   }, [isCategoryMenuOpened]);
 
   function openCategory(categoryName) {
-    setIsCategoryMenuOpened(false);
-    setCurrentCategory(categoryName);
-    setCurrentWordIndex(0);
+    let categoryWords = getCategoryWords(categoryName);
+    if (categoryWords.length === 0) {
+      // Show Modal
+      console.log("modal aobut zero words in catefg");
+    } else {
+      setIsCategoryMenuOpened(false);
+      setCurrentCategory(categoryName);
+      setCurrentWordIndex(0);
+    }
   }
 
   return (
@@ -55,7 +62,7 @@ const Categories = () => {
             </span>
             My lists
           </h3>
-          {myListsData.map((list, index) => {
+          {myLists.map((list, index) => {
             return (
               <Category
                 key={index}
@@ -64,6 +71,7 @@ const Categories = () => {
                 icon={list.icon}
                 secondIcon={list.secondIcon}
                 openCategory={openCategory}
+                levelWords={list.listWordsArray}
               />
             );
           })}
@@ -86,6 +94,12 @@ const Categories = () => {
             );
           })}
         </div>
+        <button
+          className="categories__cancel-btn"
+          onClick={() => currentCategory && setIsCategoryMenuOpened(false)}
+        >
+          Cancel
+        </button>
       </div>
     </div>
   );

@@ -8,7 +8,8 @@ import "./word.css";
 const Word = ({ currentWordIndex, currentCategoryWords }) => {
   const wordAudio = useRef(null);
   const maxSynonymsToShow = 8;
-  const { targetLang, lang } = useGlobalContext();
+  const { targetLang, lang, setCurrentWordIndex, setIsCategoryCompleted } =
+    useGlobalContext();
 
   const [wordTranslations, setWordTranslations] = useState([]);
   const [wordData, setWordData] = useState({
@@ -207,7 +208,20 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
       })
       .catch(function (error) {
         console.warn(error);
-        setIsWordLoading(false);
+        // setCurrentWordIndex((prev) => {
+        //   if (currentWordIndex === currentCategoryWords.length - 1) {
+        //     return null;
+        //   }
+        //   return prev + 1;
+        // });
+        // console.log(currentWordIndex);
+        // if (currentWordIndex) {
+        //   fetchWordInfo(
+        //     currentCategoryWords[currentWordIndex],
+        //     targetLang,
+        //     lang
+        //   );
+        // }
       });
   };
 

@@ -6,6 +6,14 @@ import myListsData from "./resources/myListsData";
 const AppContext = React.createContext();
 
 const AppProvider = ({ children }) => {
+  const starredListData = getListData("Starred");
+  const unknownUncertainListData = getListData("Unknown + Uncertain");
+  const listsNames = ["Unknown", "Uncertain", "Learned"];
+
+  const myListsArray = myListsData.filter((myList) =>
+    listsNames.includes(myList.listName)
+  );
+
   const [levels, setLevels] = useState(levelsData);
   const [isLangChosen, setIsLangChosen] = useState(false);
   const [words, setWords] = useState([]);
@@ -20,6 +28,11 @@ const AppProvider = ({ children }) => {
   const [isCategoryCompleted, setIsCategoryCompleted] = useState(false);
   const [isWordListOpened, setIsWordListOpened] = useState(false);
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
+  const [starredList, setStarredList] = useState(starredListData);
+  const [myAddedLists, setMyAddedLists] = useState(myListsArray);
+  const [unknownUncertainList, setUnknownUncertainList] = useState(
+    unknownUncertainListData
+  );
   // const [searchTerm, setSearchTerm] = useState("a");
 
   const selectCurrentLanguage = (event) => {
@@ -67,14 +80,26 @@ const AppProvider = ({ children }) => {
   };
 
   const getCategoryWords = (categoryName) => {
+    let resultWords = [];
     if (!categoryName) {
-      return [];
+      return resultWords;
     }
 
-    let foundLevel = levels.find((level) => level.levelName === categoryName);
+    let foundList = levels.find((level) => level.levelName === categoryName);
 
-    return foundLevel.levelWordsArray;
+    if (foundList) {
+      resultWords = foundList.levelWordsArray;
+    } else {
+      foundList = myLists.find((level) => level.listName === categoryName);
+      resultWords = foundList.listWordsArray;
+    }
+
+    return resultWords;
   };
+
+  function getListData(listName) {
+    return myListsData.find((list) => list.listName === listName);
+  }
 
   let currLangName = getLangName(lang);
 
@@ -107,16 +132,25 @@ const AppProvider = ({ children }) => {
         isCategoryCompleted,
         currentWordIndex,
         isWordListOpened,
+        starredList,
+        unknownUncertainList,
+        myAddedLists,
+        getCategoryWords,
         setIsCategoryCompleted,
+        setStarredList,
+        setMyLists,
         setIsWordListOpened,
         setCurrentWordIndex,
+        setMyAddedLists,
         setLoading,
         setIsLangChosen,
+        setUnknownUncertainList,
         setCurrentCategory,
         setCurrentCategoryWords,
         setIsCategoryMenuOpened,
         chooseLang,
         selectCurrentLanguage,
+        getListData,
       }}
     >
       {children}

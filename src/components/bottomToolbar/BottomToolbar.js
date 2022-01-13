@@ -3,7 +3,6 @@ import { AiFillStar } from "react-icons/ai";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { useState } from "react/cjs/react.development";
 import { useGlobalContext } from "./../../context";
-import myListsData from "./../../resources/myListsData";
 import MyListBtn from "./../MyListBtn";
 import "./bottomToolbar.css";
 
@@ -20,11 +19,14 @@ function reducer(state, action) {
         state.currentWordIndex ===
         action.payload.currentCategoryWords.length - 1
       ) {
-        action.payload.setIsCategoryCompleted(true);
-        return state;
+        return { ...state, isCategoryCompleted: true };
       }
 
-      return { ...state, currentWordIndex: state.currentWordIndex + 1 };
+      return {
+        ...state,
+        currentWordIndex: state.currentWordIndex + 1,
+        isCategoryCompleted: false,
+      };
     case ACTIONS.DECREMENT:
       if (state.currentWordIndex === 0) {
         return state;
@@ -37,10 +39,6 @@ function reducer(state, action) {
   }
 }
 
-function getListData(listName) {
-  return myListsData.find((list) => list.listName === listName);
-}
-
 const BottomToolbar = ({ currentCategoryWords }) => {
   const {
     setCurrentWordIndex,
@@ -48,47 +46,84 @@ const BottomToolbar = ({ currentCategoryWords }) => {
     currentCategory,
     setIsCategoryCompleted,
     isCategoryCompleted,
+    getListData,
+    starredList,
+    setStarredList,
+    myAddedLists,
+    setMyLists,
+    unknownUncertainList,
+    setUnknownUncertainList,
   } = useGlobalContext();
 
-  const listsNames = ["Unknown", "Uncertain", "Learned"];
-  const myListsArray = myListsData.filter((myList) =>
-    listsNames.includes(myList.listName)
-  );
-
-  const starredListData = getListData("Starred");
-
-  const unknownUncertainListData = getListData("Unknown + Uncertain");
-  const [starredList, setStarredList] = useState(starredListData);
-  const [myLists, setMyLists] = useState(myListsArray);
-  const [unknownUncertainList, setUnknownUncertainList] = useState(
-    unknownUncertainListData
-  );
   const [starred, setStarred] = useState(false);
 
   const [state, dispatch] = useReducer(reducer, {
     currentWordIndex: 0,
+    isCategoryCompleted: false,
   });
 
   const currentWord = currentCategoryWords[state.currentWordIndex];
 
   useEffect(() => {
     setCurrentWordIndex(state.currentWordIndex);
+    console.log("eff");
     checkListsForWord();
   }, [state.currentWordIndex, currentCategoryWords]);
 
+  function handleKeyPress(e) {
+    if (e.key === "ArrowLeft" || e.key === "Backspace") {
+      dispatch({ type: ACTIONS.DECREMENT });
+    } else if (e.key === "ArrowRight" || e.key === "Enter") {
+      dispatch({
+        type: ACTIONS.INCREMENT,
+        payload: {
+          currentCategoryWords: currentCategoryWords,
+          setIsCategoryCompleted: setIsCategoryCompleted,
+        },
+      });
+    }
+  }
+
   useEffect(() => {
+    document.addEventListener("keydown", handleKeyPress);
+    return () => {
+      // Cleanup the event listener
+      document.removeEventListener("keydown", handleKeyPress);
+    };
+  }, [currentCategoryWords]);
+
+  useEffect(() => {
+    setMyLists((prevMyLists) => {
+      let newMyLists = prevMyLists.map((prevMyList) => {
+        if (prevMyList.listName === "Unknown + Uncertain") {
+          return unknownUncertainList;
+        } else {
+          return prevMyList;
+        }
+      });
+      return newMyLists;
+    });
+  }, [unknownUncertainList]);
+
+  useEffect(() => {
+    console.log(currentWordIndex);
     state.currentWordIndex = currentWordIndex;
   }, [currentWordIndex]);
 
   useEffect(() => {
+    setIsCategoryCompleted(state.isCategoryCompleted);
+  }, [state.isCategoryCompleted]);
+
+  useEffect(() => {
     if (!isCategoryCompleted) {
       dispatch({ type: ACTIONS.RESET });
+      state.isCategoryCompleted = false;
     }
   }, [currentCategory, isCategoryCompleted]);
 
   function checkListsForWord() {
     // For my lists.
-    myLists.map((myList) => {
+    myAddedLists.map((myList) => {
       // Remove active from each one.
       myList.className = myList.className.replace(" active", "");
       // If the word is in a list, make the list active.
@@ -117,11 +152,13 @@ const BottomToolbar = ({ currentCategoryWords }) => {
 
   const handleAddToList = (listName) => {
     // Find the current list(that was clicked).
-    let currentList = myLists.find((myList) => myList.listName === listName);
+    let currentList = myAddedLists.find(
+      (myList) => myList.listName === listName
+    );
 
     // Remove the current word and active class from each list.
     function clearMyLists() {
-      myLists.map((myList) => {
+      myAddedLists.map((myList) => {
         myList.className = myList.className.replace(" active", "");
         myList.listWordsArray = myList.listWordsArray.filter(
           (word) => word !== currentWord
@@ -163,7 +200,7 @@ const BottomToolbar = ({ currentCategoryWords }) => {
         <IoIosArrowBack />
       </button>
       <div className="bottom-toolbar__my-list-btns">
-        {myLists.map((myList, index) => {
+        {myAddedLists.map((myList, index) => {
           return (
             <MyListBtn
               key={index}
