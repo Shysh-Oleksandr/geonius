@@ -4,14 +4,23 @@ import { GiHamburgerMenu } from "react-icons/gi";
 import "./toolbar.css";
 import { AiOutlineSearch } from "react-icons/ai";
 import { useGlobalContext } from "./../../context";
+import langs from "./../../resources/langData";
 
 const Toolbar = ({ currentCategory, currentCategoryWords }) => {
   const {
     setIsCategoryMenuOpened,
     setIsLangChosen,
     currentWordIndex,
+    lang,
     setIsWordListOpened,
+    targetLang,
   } = useGlobalContext();
+
+  function getLangsIcon(lang) {
+    let foundLang = langs.find((langEl) => langEl.langCode === lang);
+    return foundLang.flagIcon;
+  }
+
   return (
     <div className="toolbar">
       <button
@@ -32,6 +41,18 @@ const Toolbar = ({ currentCategory, currentCategoryWords }) => {
         </div>
       </button>
       <div className="toolbar__right">
+        <div className="toolbar__curr-langs">
+          <img
+            src={getLangsIcon(lang)}
+            alt="current language"
+            className="toolbar__curr-lang-img"
+          />
+          <img
+            src={getLangsIcon(targetLang)}
+            alt="target language"
+            className="toolbar__target-lang-img"
+          />
+        </div>
         <button
           type="button"
           className="toolbar__language"

@@ -4,7 +4,7 @@ import langs from "./../resources/langData";
 import { useGlobalContext } from "./../context";
 
 const LanguageSelection = () => {
-  const { currLangName, selectCurrentLanguage, chooseLang } =
+  const { currLangName, selectCurrentLanguage, chooseLang, lang } =
     useGlobalContext();
 
   return (
@@ -18,12 +18,19 @@ const LanguageSelection = () => {
             onChange={selectCurrentLanguage}
             name="currentLanguage"
             id="currentLanguage"
+            value={lang}
           >
-            <option value="en">English</option>
-            <option value="es">Spanish</option>
-            <option value="de">German</option>
-            <option value="fr">French</option>
-            <option value="ru">Russian</option>
+            {langs.map((lang, index) => {
+              return (
+                <option
+                  // selected={lang.langCode === currLangName}
+                  key={index}
+                  value={lang.langCode}
+                >
+                  {lang.langName}
+                </option>
+              );
+            })}
           </select>
         </div>
       </div>

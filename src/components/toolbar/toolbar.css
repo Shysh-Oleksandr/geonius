@@ -86,3 +86,24 @@
   color: #8f8f8f;
   font-size: 1rem;
 }
+
+.toolbar__curr-langs {
+  display: inline;
+  vertical-align: -webkit-baseline-middle;
+  margin-right: 1.7rem;
+}
+
+.toolbar__curr-langs img {
+  max-width: 33px;
+  height: auto;
+}
+
+.toolbar__curr-lang-img {
+  transform: translateX(25%);
+  z-index: 3;
+}
+
+.toolbar__target-lang-img {
+  transform: translate(-25%, 15%);
+  z-index: 5;
+}

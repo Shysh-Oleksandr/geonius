@@ -65,8 +65,11 @@ const BottomToolbar = ({ currentCategoryWords }) => {
   const currentWord = currentCategoryWords[state.currentWordIndex];
 
   useEffect(() => {
-    setCurrentWordIndex(state.currentWordIndex);
-    console.log("eff");
+    if (state.currentWordIndex !== currentWordIndex) {
+      console.log(state.currentWordIndex, currentWordIndex);
+      setCurrentWordIndex(state.currentWordIndex);
+      console.log("eff");
+    }
     checkListsForWord();
   }, [state.currentWordIndex, currentCategoryWords]);
 
@@ -106,7 +109,7 @@ const BottomToolbar = ({ currentCategoryWords }) => {
   }, [unknownUncertainList]);
 
   useEffect(() => {
-    console.log(currentWordIndex);
+    console.log("curr w i eff");
     state.currentWordIndex = currentWordIndex;
   }, [currentWordIndex]);
 
