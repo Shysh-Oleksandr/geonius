@@ -86,30 +86,27 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
   }
 
   function getWordExamples(wordExamplesLocal, data) {
+    let currentWord = data[0].word.toLowerCase();
     wordExamplesLocal = data[0].meanings.map((item) => {
-      if (!item.definitions[0].example) {
+      let currentExample = item.definitions[0].example;
+      console.log(currentExample);
+      if (!currentExample) {
         return;
       }
-      if (
-        !item.definitions[0].example.includes(`${data[0].word}`) &&
-        !item.definitions[0].example.startsWith(data[0].word) &&
-        !item.definitions[0].example.endsWith(data[0].word)
-      ) {
+      currentExample = currentExample.toLowerCase();
+      if (!currentExample.includes(`${currentWord}`)) {
         return {
-          wordExample: item.definitions[0].example,
+          wordExample: currentExample,
         };
       }
       return {
-        wordExample: highlightWord(
-          `${data[0].word}`,
-          item.definitions[0].example
-        ),
+        wordExample: highlightWord(`${currentWord}`, currentExample),
       };
     });
-    if (wordExamplesLocal.includes(undefined)) {
-      wordExamplesLocal = [];
-    }
+    console.log(wordExamplesLocal);
+    wordExamplesLocal = wordExamplesLocal.filter((example) => example);
 
+    console.log(wordExamplesLocal);
     return wordExamplesLocal;
   }
 
@@ -134,19 +131,30 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
   }
 
   function highlightWord(word, string) {
-    if (string.includes(word)) {
+    console.log(word, string);
+    if (
+      string.includes(` ${word} `) ||
+      string.startsWith(word) ||
+      string.endsWith(word)
+    ) {
       const regex = new RegExp(`${word}`);
       return string.replace(
         regex,
         `<span class="higlighted-word">${word}</span>`
       );
     }
+    return string;
   }
 
   const playWordAudio = () => {
     if (!phonetics[0].audio) return;
     wordAudio.current.play();
   };
+
+  function filterWord(word) {
+    let filteredWord = word.replace(/[^'’ a-zA-Z\u0400-\u04FF]/g, "");
+    return filteredWord !== "" ? filteredWord : null;
+  }
 
   function checkResponse(response) {
     if (response.ok) {
@@ -159,22 +167,17 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
   const fetchWordInfo = (word, targetLang, lang) => {
     setIsWordLoading(true);
     let wordExamplesLocal;
-    // console.log(word);
-    if (word === "") {
-      word = "no";
-    }
 
     fetch(`https://api.dictionaryapi.dev/api/v2/entries/${targetLang}/${word}`)
       .then((response) => checkResponse(response))
       .then(function (data) {
+        data[0].word = filterWord(data[0].word);
         setWordData(data[0]);
-        // console.log(data[0]);
 
         getSynonymsAntonyms(data[0]);
 
         wordExamplesLocal = getWordExamples(wordExamplesLocal, data);
         setWordExamples(wordExamplesLocal);
-        setIsWordLoading(false); // added line
 
         // Fetch another API
         return fetchTranslation(word, targetLang, lang);
@@ -183,7 +186,14 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
       .then(function (userData) {
         let wordTranslations = [
           ...new Set(
-            userData.matches.map((item) => item.translation.toLowerCase())
+            userData.matches
+              .map((item) => {
+                let filteredTranslation = filterWord(
+                  item.translation.toLowerCase()
+                );
+                return filteredTranslation;
+              })
+              .filter((item) => item)
           ),
         ];
         setWordTranslations(wordTranslations);
@@ -223,7 +233,6 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
 
   useEffect(() => {
     if (currentCategoryWords.length > 0) {
-      console.log("fet word");
       fetchWordInfo(currentCategoryWords[currentWordIndex], targetLang, lang);
     }
   }, [currentWordIndex, currentCategoryWords]);
