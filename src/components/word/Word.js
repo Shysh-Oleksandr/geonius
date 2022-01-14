@@ -113,14 +113,6 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
     return wordExamplesLocal;
   }
 
-  function checkResponse(response) {
-    if (response.ok) {
-      return response.json();
-    } else {
-      return Promise.reject(response);
-    }
-  }
-
   function convertPartOfSpeech(partOfSpeech) {
     let convertedString = "";
     if (!partOfSpeech) {
@@ -155,6 +147,14 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
     if (!phonetics[0].audio) return;
     wordAudio.current.play();
   };
+
+  function checkResponse(response) {
+    if (response.ok) {
+      return response.json();
+    } else {
+      return Promise.reject(response);
+    }
+  }
 
   const fetchWordInfo = (word, targetLang, lang) => {
     setIsWordLoading(true);
@@ -213,23 +213,17 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
         console.warn(error);
         setCurrentWordIndex((prev) => {
           if (currentWordIndex === currentCategoryWords.length - 1) {
-            return null;
+            setIsCategoryCompleted(true);
+            return prev;
           }
           return prev + 1;
         });
-        console.log(currentWordIndex);
-        if (currentWordIndex) {
-          fetchWordInfo(
-            currentCategoryWords[currentWordIndex],
-            targetLang,
-            lang
-          );
-        }
       });
   };
 
   useEffect(() => {
     if (currentCategoryWords.length > 0) {
+      console.log("fet word");
       fetchWordInfo(currentCategoryWords[currentWordIndex], targetLang, lang);
     }
   }, [currentWordIndex, currentCategoryWords]);
