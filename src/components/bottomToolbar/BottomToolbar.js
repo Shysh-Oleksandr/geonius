@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { AiFillStar } from "react-icons/ai";
 import {
   IoIosArrowBack,
@@ -9,39 +9,6 @@ import { useState } from "react/cjs/react.development";
 import { MODES, useGlobalContext } from "./../../context";
 import MyListBtn from "./../MyListBtn";
 import "./bottomToolbar.css";
-
-const ACTIONS = {
-  INCREMENT: "increment",
-  DECREMENT: "decrement",
-  RESET: "reset",
-};
-
-function reducer(state, action) {
-  switch (action.type) {
-    case ACTIONS.INCREMENT:
-      if (
-        state.currentWordIndex ===
-        action.payload.currentCategoryWords.length - 1
-      ) {
-        return { ...state, isCategoryCompleted: true };
-      }
-
-      return {
-        ...state,
-        currentWordIndex: state.currentWordIndex + 1,
-        isCategoryCompleted: false,
-      };
-    case ACTIONS.DECREMENT:
-      if (state.currentWordIndex === 0) {
-        return state;
-      }
-      return { ...state, currentWordIndex: state.currentWordIndex - 1 };
-    case ACTIONS.RESET:
-      return { ...state, currentWordIndex: 0 };
-    default:
-      return state;
-  }
-}
 
 const BottomToolbar = ({ currentCategoryWords }) => {
   const {
@@ -54,6 +21,7 @@ const BottomToolbar = ({ currentCategoryWords }) => {
     starredList,
     setStarredList,
     myAddedLists,
+    setMyAddedLists,
     setMyLists,
     unknownUncertainList,
     setUnknownUncertainList,
@@ -66,44 +34,24 @@ const BottomToolbar = ({ currentCategoryWords }) => {
 
   const slideRef = useRef();
 
-  const [state, dispatch] = useReducer(reducer, {
-    currentWordIndex: 0,
-    isCategoryCompleted: false,
-  });
-
-  const currentWord = currentCategoryWords[state.currentWordIndex];
+  const currentWord = currentCategoryWords[currentWordIndex];
 
   useEffect(() => {
-    if (state.currentWordIndex !== currentWordIndex) {
-      // console.log(state.currentWordIndex, currentWordIndex);
-      setCurrentWordIndex(state.currentWordIndex);
-      // console.log("eff");
-      if (currentMode === MODES.SLIDE) setIsSlided(true);
-    }
+    if (currentMode === MODES.SLIDE) setIsSlided(true);
     checkListsForWord();
-  }, [state.currentWordIndex, currentCategoryWords]);
 
-  function handleKeyPress(e) {
-    if (e.key === "ArrowLeft" || e.key === "Backspace") {
-      dispatch({ type: ACTIONS.DECREMENT });
-    } else if (e.key === "ArrowRight" || e.key === "Enter") {
-      dispatch({
-        type: ACTIONS.INCREMENT,
-        payload: {
-          currentCategoryWords: currentCategoryWords,
-          setIsCategoryCompleted: setIsCategoryCompleted,
-        },
-      });
-    }
-  }
-
-  useEffect(() => {
     document.addEventListener("keydown", handleKeyPress);
     return () => {
       // Cleanup the event listener
       document.removeEventListener("keydown", handleKeyPress);
     };
-  }, [currentCategoryWords]);
+  }, [currentWordIndex, currentCategoryWords, currentMode]);
+
+  useEffect(() => {
+    if (!isCategoryCompleted) {
+      setCurrentWordIndex(0);
+    }
+  }, [currentCategory, isCategoryCompleted]);
 
   useEffect(() => {
     setMyLists((prevMyLists) => {
@@ -118,37 +66,49 @@ const BottomToolbar = ({ currentCategoryWords }) => {
     });
   }, [unknownUncertainList]);
 
-  useEffect(() => {
-    // console.log("curr w i eff");
-    state.currentWordIndex = currentWordIndex;
-  }, [currentWordIndex]);
-
-  useEffect(() => {
-    setIsCategoryCompleted(state.isCategoryCompleted);
-  }, [state.isCategoryCompleted]);
-
-  useEffect(() => {
-    if (!isCategoryCompleted) {
-      dispatch({ type: ACTIONS.RESET });
-      state.isCategoryCompleted = false;
+  function handleKeyPress(e) {
+    if (e.key === "ArrowLeft" || e.key === "Backspace") {
+      decrement();
+    } else if (e.key === "ArrowRight" || e.key === "Enter") {
+      increment();
+    } else if (e.key === " ") {
+      if (currentMode === MODES.SLIDE) setIsSlided(false);
     }
-  }, [currentCategory, isCategoryCompleted]);
+  }
 
   function checkListsForWord() {
     // For my lists.
-    myAddedLists.map((myList) => {
-      // Remove active from each one.
-      myList.className = myList.className.replace(" active", "");
-      // If the word is in a list, make the list active.
-      if (myList.listWordsArray.includes(currentWord)) {
-        myList.className += " active";
-      }
+    setMyAddedLists((prevLists) => {
+      let newLists = prevLists.map((myList) => {
+        // Remove active from each one.
+        myList.className = myList.className.replace(" active", "");
+        // If the word is in a list, make the list active.
+        if (myList.listWordsArray.includes(currentWord)) {
+          myList.className += " active";
+        }
+        return myList;
+      });
+      return newLists;
     });
+
     // For the starred list.
     // If the word is in starred list then make starred active. Otherwise removes active.
     starredList.listWordsArray.includes(currentWord)
       ? setStarred(true)
       : setStarred(false);
+  }
+
+  function increment() {
+    if (currentWordIndex === currentCategoryWords.length - 1) {
+      setIsCategoryCompleted(true);
+    } else {
+      setIsCategoryCompleted(false);
+      setCurrentWordIndex(currentWordIndex + 1);
+    }
+  }
+
+  function decrement() {
+    currentWordIndex !== 0 && setCurrentWordIndex(currentWordIndex - 1);
   }
 
   const handleStarredClick = (starredListArray) => {
@@ -202,10 +162,6 @@ const BottomToolbar = ({ currentCategoryWords }) => {
     });
   };
 
-  function handleSlide() {
-    setIsSlided(false);
-  }
-
   return (
     <div
       className={`bottom-toolbar ${
@@ -213,7 +169,7 @@ const BottomToolbar = ({ currentCategoryWords }) => {
       }`}
     >
       <div
-        onClick={handleSlide}
+        onClick={() => setIsSlided(false)}
         ref={slideRef}
         className={`word__slide ${
           currentMode !== MODES.SLIDE || !isSlided ? "hidden" : ""
@@ -224,7 +180,7 @@ const BottomToolbar = ({ currentCategoryWords }) => {
         </span>
       </div>
       <MyListBtn
-        className={`word__star ${starred && "active"}`}
+        className={`word__star ${starred ? "active" : ""}`}
         icon={<AiFillStar />}
         onClick={() => handleStarredClick(starredList)}
       />
@@ -232,7 +188,7 @@ const BottomToolbar = ({ currentCategoryWords }) => {
       <button
         type="button"
         className="bottom-toolbar__arrow-back bottom-toolbar__arrow"
-        onClick={() => dispatch({ type: ACTIONS.DECREMENT })}
+        onClick={decrement}
       >
         <IoIosArrowBack />
       </button>
@@ -252,15 +208,7 @@ const BottomToolbar = ({ currentCategoryWords }) => {
       <button
         type="button"
         className="bottom-toolbar__arrow-forward bottom-toolbar__arrow"
-        onClick={() =>
-          dispatch({
-            type: ACTIONS.INCREMENT,
-            payload: {
-              currentCategoryWords: currentCategoryWords,
-              setIsCategoryCompleted: setIsCategoryCompleted,
-            },
-          })
-        }
+        onClick={increment}
       >
         <IoIosArrowForward />
       </button>

@@ -40,7 +40,7 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
           "x-rapidapi-host":
             "translated-mymemory---translation-memory.p.rapidapi.com",
           "x-rapidapi-key":
-            "7b389175f0msh009f4e4a767290bp150759jsn71aaf3158c35",
+            "e8c5af70aamsh4aa76a464e2c81dp1629bfjsne609e67c0226",
         },
       }
     );
@@ -177,38 +177,38 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
         setIsWordLoading(false); // added line
 
         // Fetch another API
-        // return fetchTranslation(word, targetLang, lang);
+        return fetchTranslation(word, targetLang, lang);
       })
-      // .then((response) => checkResponse(response))
-      // .then(function (userData) {
-      //   let wordTranslations = [
-      //     ...new Set(
-      //       userData.matches.map((item) => item.translation.toLowerCase())
-      //     ),
-      //   ];
-      //   setWordTranslations(wordTranslations);
+      .then((response) => checkResponse(response))
+      .then(function (userData) {
+        let wordTranslations = [
+          ...new Set(
+            userData.matches.map((item) => item.translation.toLowerCase())
+          ),
+        ];
+        setWordTranslations(wordTranslations);
 
-      // return Promise.all(
-      //   wordExamplesLocal
-      //     .map((item) => {
-      //       return item.wordExample;
-      //     })
-      //     .map((wordExample) =>
-      //       fetchTranslation(wordExample, targetLang, lang)
-      //     )
-      // );
-      // })
-      // .then(function (responses) {
-      //   return Promise.all(
-      //     responses.map(function (response) {
-      //       return response.json();
-      //     })
-      //   );
-      // })
-      // .then(function (data) {
-      // getWordExamplesTranslations(data);
-      // setIsWordLoading(false);
-      // })
+        return Promise.all(
+          wordExamplesLocal
+            .map((item) => {
+              return item.wordExample;
+            })
+            .map((wordExample) =>
+              fetchTranslation(wordExample, targetLang, lang)
+            )
+        );
+      })
+      .then(function (responses) {
+        return Promise.all(
+          responses.map(function (response) {
+            return response.json();
+          })
+        );
+      })
+      .then(function (data) {
+        getWordExamplesTranslations(data);
+        setIsWordLoading(false);
+      })
       .catch(function (error) {
         console.warn(error);
         setCurrentWordIndex((prev) => {
@@ -218,18 +218,17 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
           return prev + 1;
         });
         console.log(currentWordIndex);
-        // if (currentWordIndex) {
-        //   fetchWordInfo(
-        //     currentCategoryWords[currentWordIndex],
-        //     targetLang,
-        //     lang
-        //   );
-        // }
+        if (currentWordIndex) {
+          fetchWordInfo(
+            currentCategoryWords[currentWordIndex],
+            targetLang,
+            lang
+          );
+        }
       });
   };
 
   useEffect(() => {
-    console.log("eff fet");
     if (currentCategoryWords.length > 0) {
       fetchWordInfo(currentCategoryWords[currentWordIndex], targetLang, lang);
     }
@@ -263,13 +262,13 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
           })}
         </h5>
         <ol className="word__translations">
-          {/* {wordTranslations.map((translation, index) => {
+          {wordTranslations.map((translation, index) => {
             return (
               <li key={index} className="word__translation">
                 {translation}
               </li>
             );
-          })} */}
+          })}
         </ol>
       </div>
       <div className="word__usage">
@@ -285,12 +284,12 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
                       __html: wordExample.wordExample,
                     }}
                   ></h4>
-                  {/* <h5
+                  <h5
                     className="word__example-translation"
                     dangerouslySetInnerHTML={{
                       __html: wordExample.wordExampleTranslation,
                     }}
-                  ></h5> */}
+                  ></h5>
                 </div>
               );
             })}
