@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useReducer, useRef } from "react";
 import { AiFillStar } from "react-icons/ai";
 import {
   IoIosArrowBack,
@@ -6,17 +6,22 @@ import {
   IoIosArrowForward,
   IoMdCheckmark,
 } from "react-icons/io";
+import { MdReplay } from "react-icons/md";
 import { useState } from "react/cjs/react.development";
 import { MODES, useGlobalContext } from "./../../context";
 import MyListBtn from "./../MyListBtn";
 import "./bottomToolbar.css";
-import { MdReplay } from "react-icons/md";
 
-const BottomToolbar = ({ currentCategoryWords, isCorrect }) => {
+const BottomToolbar = ({
+  currentCategoryWords,
+  isCorrect,
+  setGuess,
+  setShowWordInfo,
+  showWordInfo,
+}) => {
   const {
     setCurrentWordIndex,
     currentWordIndex,
-    currentCategory,
     setIsCategoryCompleted,
     isCategoryCompleted,
     getListData,
@@ -50,10 +55,10 @@ const BottomToolbar = ({ currentCategoryWords, isCorrect }) => {
   }, [currentWordIndex, currentCategoryWords, currentMode]);
 
   useEffect(() => {
-    if (!isCategoryCompleted) {
+    if (isCategoryCompleted) {
       setCurrentWordIndex(0);
     }
-  }, [currentCategory, isCategoryCompleted]);
+  }, [currentCategoryWords]);
 
   useEffect(() => {
     setMyLists((prevMyLists) => {
@@ -100,7 +105,10 @@ const BottomToolbar = ({ currentCategoryWords, isCorrect }) => {
       : setStarred(false);
   }
 
-  function increment() {
+  function increment(e) {
+    if (!e) e = window.event;
+    e.stopPropagation();
+
     if (currentWordIndex === currentCategoryWords.length - 1) {
       setIsCategoryCompleted(true);
     } else {
@@ -109,7 +117,9 @@ const BottomToolbar = ({ currentCategoryWords, isCorrect }) => {
     }
   }
 
-  function decrement() {
+  function decrement(e) {
+    if (!e) e = window.event;
+    e.stopPropagation();
     currentWordIndex !== 0 && setCurrentWordIndex(currentWordIndex - 1);
   }
 
@@ -167,7 +177,25 @@ const BottomToolbar = ({ currentCategoryWords, isCorrect }) => {
   if (currentMode === MODES.QUIZ) {
     return (
       <div className="bottom-toolbar quiz-mode">
-        {isCorrect ? (
+        <div
+          className="bottom-toolbar__my-list-btns"
+          onClick={(e) => {
+            if (!e) e = window.event;
+            e.stopPropagation();
+          }}
+        >
+          {myAddedLists.map((myList, index) => {
+            return (
+              <MyListBtn
+                key={index}
+                className={`bottom-toolbar__${myList.className}`}
+                icon={myList.icon}
+                onClick={() => handleAddToList(myList.listName)}
+              />
+            );
+          })}
+        </div>
+        {isCorrect || showWordInfo ? (
           <div className="quiz__btns">
             <button
               type="button"
@@ -192,6 +220,16 @@ const BottomToolbar = ({ currentCategoryWords, isCorrect }) => {
             <button
               type="button"
               className="bottom-toolbar__try-again  bottom-toolbar__arrow"
+              onClick={(e) => {
+                if (!e) e = window.event;
+                e.stopPropagation();
+                setShowWordInfo(false);
+                setGuess({
+                  isGuessed: false,
+                  isCorrect: undefined,
+                  replay: true,
+                });
+              }}
             >
               <span>
                 <MdReplay />
@@ -201,6 +239,7 @@ const BottomToolbar = ({ currentCategoryWords, isCorrect }) => {
             <button
               type="button"
               className="bottom-toolbar__answer bottom-toolbar__arrow"
+              onClick={() => setShowWordInfo(true)}
             >
               <span>
                 <IoMdCheckmark />

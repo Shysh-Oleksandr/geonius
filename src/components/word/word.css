@@ -172,9 +172,6 @@
   margin: 5rem 1.2rem 0;
 }
 
-.quiz__options {
-}
-
 .quiz__hint-container {
   margin-right: 1.5rem;
   margin-bottom: 1.5rem;
@@ -244,6 +241,13 @@
 
 .quiz__word-modal.show {
   bottom: 0;
+  top: auto;
+}
+
+.quiz__word-modal.full-info {
+  border-radius: 0;
+  top: 0;
+  bottom: 0;
 }
 
 .quiz__word-modal.correct {
@@ -280,7 +284,7 @@
 
 .quiz .quiz__combo {
   position: absolute;
-  left: 1.5rem;
+  left: 11.5rem;
   top: 0.5rem;
   font-size: 1.2rem;
   z-index: 6;
@@ -303,6 +307,12 @@
   font-size: 3.5rem;
   line-height: 2rem;
 }
+
+.full-info .quiz__correct-icon {
+  font-size: 2.5rem;
+  line-height: 1rem;
+}
+
 .quiz .word__label {
   color: #fff;
   font-size: 2.4rem;
@@ -331,4 +341,41 @@
 
 .quiz .word__label.wrong-option::first-letter {
   text-transform: lowercase;
+}
+
+.full-info .quiz__modal-full-top {
+  background-color: #43e99c;
+  padding: 0.5rem;
+  padding-top: 2rem;
+}
+
+.full-info {
+  background-color: #fff !important;
+  padding: 0;
+}
+
+.full-info .word__translations {
+  display: block;
+  margin: 2rem 0;
+  padding: 0 1rem;
+}
+
+.full-info .word__translation:not(.word__translation-top) {
+  color: #212121;
+  font-weight: 500;
+  font-size: 1.6rem;
+  letter-spacing: 1px;
+  text-transform: lowercase;
+  line-height: 1.6rem;
+  margin-left: 2rem;
+}
+
+.full-info .word__translations li:before {
+  background-color: #e0e0e0;
+  color: #212121;
+  top: 58%;
+}
+
+.quiz__additional-info {
+  margin: 0 10rem;
 }

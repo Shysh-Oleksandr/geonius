@@ -34,10 +34,18 @@ const Toolbar = ({ currentCategory, currentCategoryWords }) => {
           <MdPlayArrow />
         </div>
         <div className="toolbar__category-info">
-          <h4 className="toolbar__category-title">
-            {currentCategory ? currentCategory : "Learned"}
+          <h4
+            className={`toolbar__category-title ${
+              currentCategoryWords.length === 0 ? "hidden" : ""
+            }`}
+          >
+            {currentCategory ? currentCategory : "Category"}
           </h4>
-          <div className="toolbar__category-words">
+          <div
+            className={`toolbar__category-words ${
+              currentCategoryWords.length === 0 ? "hidden" : ""
+            }`}
+          >
             ({currentWordIndex + 1}/{currentCategoryWords.length})
           </div>
         </div>

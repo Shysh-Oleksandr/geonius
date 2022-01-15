@@ -10,6 +10,7 @@ const CategoryCompletedModal = () => {
     setCurrentCategoryWords,
     setIsCategoryCompleted,
     setCurrentCategory,
+    setCurrentWordIndex,
   } = useGlobalContext();
 
   function handleNewCategory() {
@@ -17,9 +18,11 @@ const CategoryCompletedModal = () => {
     setCurrentCategoryWords([]);
     setCurrentCategory(null);
     setIsCategoryCompleted(false);
+    setCurrentWordIndex(0);
   }
   function handleCurrentCategory() {
     setIsCategoryCompleted(false);
+    setCurrentWordIndex(0);
   }
   return (
     <div className={`category-completed__wrapper`}>

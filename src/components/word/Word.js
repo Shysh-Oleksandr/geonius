@@ -30,6 +30,7 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
   ]);
   const [isHintUsed, setIsHintUsed] = useState(false);
   const [chosenOption, setChosenOption] = useState(null);
+  const [showWordInfo, setShowWordInfo] = useState(false);
   const [guess, setGuess] = useState({
     isGuessed: false,
     isCorrect: undefined,
@@ -158,7 +159,7 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
       const regex = new RegExp(`${word}`);
       return string.replace(
         regex,
-        `<span class="higlighted-word">${word}</span>`
+        `<span className="higlighted-word">${word}</span>`
       );
     }
     return string;
@@ -279,6 +280,7 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
   function generateQuizOptions() {
     // Reset guess and hint.
     setGuess({ isGuessed: false, isCorrect: undefined });
+    setShowWordInfo(false);
     setIsHintUsed(false);
     // At start quiz options contain only the current word.
     let generatedQuizOptions = [currentWord];
@@ -322,6 +324,16 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
       generateQuizOptions();
     }
   }, [currentMode, currentWordIndex, currentCategoryWords]);
+
+  useEffect(() => {
+    if (
+      currentMode === MODES.QUIZ &&
+      currentCategoryWords.length !== 0 &&
+      guess.replay
+    ) {
+      generateQuizOptions();
+    }
+  }, [guess]);
 
   function handleHint() {
     setQuizOptions((prev) => {
@@ -378,127 +390,129 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
         </div>
         {guess.isGuessed && <div className="dark-bg"></div>}
         <div
+          onClick={() => setShowWordInfo(true)}
           className={`quiz__word-modal ${guess.isGuessed ? "show" : "hide"} ${
-            guess.isCorrect ? "correct" : "wrong"
-          }`}
+            guess.isCorrect || showWordInfo ? "correct" : "wrong"
+          } ${showWordInfo ? "full-info" : ""}`}
         >
-          <span className="quiz__arrow-up">
-            <IoIosArrowUp />
-          </span>
-          <div className="quiz__word-modal-top">
-            <div className="quiz__combo">
-              Combo
-              <br />
-              <span>{comboNumber}</span>
-            </div>
-            <div className="quiz__correct-icon">
-              {guess.isCorrect ? <IoMdCheckmark /> : <IoMdClose />}
-            </div>
-          </div>
-          <div className="quiz__short-info">
-            {guess.isCorrect ? (
-              <div
-                onClick={playWordAudio}
-                className={`word__audio-container ${
-                  phonetics[0].audio && "has-audio"
-                }`}
-              >
-                <h2 className="word__label">{word}</h2>
-                <h2 className="word__translation">{wordTranslations[0]}</h2>
-                <h4 className="word__phonetic">
-                  {phonetics[0].audio && <MdVolumeUp />}
-                  {phonetics[0].text}
-                  {phonetics[0].audio && (
-                    <audio ref={wordAudio} src={phonetics[0].audio}></audio>
-                  )}
-                </h4>
+          {!showWordInfo && (
+            <span className="quiz__arrow-up">
+              <IoIosArrowUp />
+            </span>
+          )}
+          <div className="quiz__modal-full-top">
+            <div className="quiz__word-modal-top">
+              <div className="quiz__combo">
+                Combo
+                <br />
+                <span>{comboNumber}</span>
               </div>
-            ) : (
-              <h2 className="word__label wrong-option">{chosenOption}</h2>
-            )}
+              {(!showWordInfo || guess.isCorrect) && (
+                <div className="quiz__correct-icon">
+                  {guess.isCorrect ? <IoMdCheckmark /> : <IoMdClose />}
+                </div>
+              )}
+            </div>
+            <div className="quiz__short-info">
+              {guess.isCorrect || showWordInfo ? (
+                <div
+                  onClick={playWordAudio}
+                  className={`word__audio-container ${
+                    phonetics[0].audio && "has-audio"
+                  }`}
+                >
+                  <h2 className="word__label">{word}</h2>
+                  <h2 className="word__translation word__translation-top">
+                    {wordTranslations[0]}
+                  </h2>
+                  <h4 className="word__phonetic">
+                    {phonetics[0].audio && <MdVolumeUp />}
+                    {phonetics[0].text}
+                    {phonetics[0].audio && (
+                      <audio ref={wordAudio} src={phonetics[0].audio}></audio>
+                    )}
+                  </h4>
+                </div>
+              ) : (
+                <h2 className="word__label wrong-option">{chosenOption}</h2>
+              )}
+            </div>
           </div>
+          {showWordInfo && (
+            <div className="quiz__additional-info">
+              <ol className="word__translations">
+                <h4 className="word__example-label">Definitions</h4>
+                {wordTranslations.map((translation, index) => {
+                  return (
+                    <li key={index} className="word__translation">
+                      {translation}
+                    </li>
+                  );
+                })}
+              </ol>
+              <div className="word__usage">
+                {wordExamples.length > 0 && (
+                  <div className="word__examples">
+                    <h4 className="word__example-label">Examples</h4>
+                    {wordExamples.map((wordExample, index) => {
+                      return (
+                        <div key={index} className="word__example-container">
+                          <h4
+                            className="word__example"
+                            dangerouslySetInnerHTML={{
+                              __html: wordExample.wordExample,
+                            }}
+                          ></h4>
+                          <h5
+                            className="word__example-translation"
+                            dangerouslySetInnerHTML={{
+                              __html: wordExample.wordExampleTranslation,
+                            }}
+                          ></h5>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+                <div className="word__synonyms-antonyms">
+                  {wordSynonyms.length > 0 && (
+                    <div className="word__synonyms-container">
+                      <h4 className="word__synonyms-label">Synonyms</h4>
+                      <p className="word__synonyms">
+                        {wordSynonyms.map((word, index) => {
+                          if (index === wordSynonyms.length - 1) {
+                            return `${word}`;
+                          }
+                          return `${word}, `;
+                        })}
+                      </p>
+                    </div>
+                  )}
+                  {wordAntonyms.length > 0 && (
+                    <div className="word__antonyms-container">
+                      <h4 className="word__antonyms-label">Antonyms</h4>
+                      <p className="word__antonyms">
+                        {wordAntonyms.map((word, index) => {
+                          if (index === wordAntonyms.length - 1) {
+                            return `${word}`;
+                          }
+                          return `${word}, `;
+                        })}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
           <BottomToolbar
             currentCategoryWords={currentCategoryWords}
             isCorrect={guess.isCorrect}
+            setGuess={setGuess}
+            setShowWordInfo={setShowWordInfo}
+            showWordInfo={showWordInfo}
           />
         </div>
-
-        {/* <div
-          onClick={playWordAudio}
-          className={`word__audio-container ${
-            phonetics[0].audio && "has-audio"
-          }`}
-        >
-          <h2 className="word__label">{word}</h2>
-          <h4 className="word__phonetic">
-            {phonetics[0].audio && <MdVolumeUp />}
-            {phonetics[0].text}
-            {phonetics[0].audio && (
-              <audio ref={wordAudio} src={phonetics[0].audio}></audio>
-            )}
-          </h4>
-        </div>
-
-        <div>
-          <h5 className="word__part-of-speech">
-            {meanings.map((meaning) => {
-              return `${convertPartOfSpeech(meaning.partOfSpeech)} `;
-            })}
-          </h5>
-        </div>
-        <div className="word__usage">
-          {wordExamples.length > 0 && (
-            <div className="word__examples">
-              <h4 className="word__example-label">Examples</h4>
-              {wordExamples.map((wordExample, index) => {
-                return (
-                  <div key={index} className="word__example-container">
-                    <h4
-                      className="word__example"
-                      dangerouslySetInnerHTML={{
-                        __html: wordExample.wordExample,
-                      }}
-                    ></h4>
-                    <h5
-                      className="word__example-translation"
-                      dangerouslySetInnerHTML={{
-                        __html: wordExample.wordExampleTranslation,
-                      }}
-                    ></h5>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-          <div className="word__synonyms-antonyms">
-            {wordSynonyms.length > 0 && (
-              <div className="word__synonyms-container">
-                <h4 className="word__synonyms-label">Synonyms</h4>
-                <p className="word__synonyms">
-                  {wordSynonyms.map((word, index) => {
-                    if (index === wordSynonyms.length - 1) {
-                      return `${word}`;
-                    }
-                    return `${word}, `;
-                  })}
-                </p>
-              </div>
-            )}
-            {wordAntonyms.length > 0 && (
-              <div className="word__antonyms-container">
-                <h4 className="word__antonyms-label">Antonyms</h4>
-                <p className="word__antonyms">
-                  {wordAntonyms.map((word, index) => {
-                    if (index === wordAntonyms.length - 1) {
-                      return `${word}`;
-                    }
-                    return `${word}, `;
-                  })}
-                </p>
-              </div>
-            )}
-          </div>
-        </div> */}
       </div>
     );
   }

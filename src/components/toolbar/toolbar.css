@@ -80,11 +80,16 @@
   line-height: 2rem;
   font-weight: 500;
   color: #4a4a4a;
-  transition: all 0.2s ease-in-out;
+  transition: color 0.2s ease-in-out;
 }
 .toolbar__category-words {
   color: #8f8f8f;
   font-size: 1rem;
+}
+
+.toolbar__category-title.hidden,
+.toolbar__category-words.hidden {
+  opacity: 0;
 }
 
 .toolbar__curr-langs {
