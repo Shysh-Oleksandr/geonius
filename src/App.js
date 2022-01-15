@@ -1,7 +1,7 @@
 import Categories from "./components/categories/Categories";
 import LanguageSelection from "./components/LanguageSelection";
 import Toolbar from "./components/toolbar/Toolbar";
-import { useGlobalContext } from "./context";
+import { MODES, useGlobalContext } from "./context";
 import "./styles.css";
 import WordsLearning from "./components/wordsLearning/WordsLearning";
 import BottomToolbar from "./components/bottomToolbar/BottomToolbar";
@@ -20,6 +20,7 @@ function App() {
     isWordListOpened,
     isCategoryCompleted,
     alert,
+    currentMode,
     isModeMenuOpened,
     showAlert,
   } = useGlobalContext();
@@ -54,7 +55,9 @@ function App() {
       {isModeMenuOpened && <ModeMenu />}
       <WordsLearning />
       {isCategoryCompleted && <CategoryCompletedModal />}
-      <BottomToolbar currentCategoryWords={currentCategoryWords} />
+      {currentMode !== MODES.QUIZ && (
+        <BottomToolbar currentCategoryWords={currentCategoryWords} />
+      )}
     </div>
   );
 }

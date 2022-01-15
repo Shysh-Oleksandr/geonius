@@ -1,17 +1,39 @@
 import { React, useEffect, useRef } from "react";
-import { IoIosArrowDown } from "react-icons/io";
 import { MdVolumeUp } from "react-icons/md";
 import { useState } from "react/cjs/react.development";
 import { useGlobalContext } from "../../context";
+import { MODES } from "./../../context";
 import partOfSpeechShortForm from "./partOfSpeechData";
 import "./word.css";
+import bulbIcon from "../../assets/idea.png";
+import { IoIosArrowUp, IoMdClose, IoMdCheckmark } from "react-icons/io";
+import BottomToolbar from "./../bottomToolbar/BottomToolbar";
 
 const Word = ({ currentWordIndex, currentCategoryWords }) => {
   const wordAudio = useRef(null);
-  const maxSynonymsToShow = 8;
-  const { targetLang, lang, setCurrentWordIndex, setIsCategoryCompleted } =
-    useGlobalContext();
+  const MAX_SYNONYMS_TO_SHOW = 8;
+  const OPTIONS_NUMBER = 4;
+  const currentWord = currentCategoryWords[currentWordIndex];
+  const {
+    targetLang,
+    lang,
+    setCurrentWordIndex,
+    setIsCategoryCompleted,
+    levels,
+    currentMode,
+    comboNumber,
+    setComboNumber,
+  } = useGlobalContext();
 
+  const [quizOptions, setQuizOptions] = useState([
+    { option: "", isHinted: false },
+  ]);
+  const [isHintUsed, setIsHintUsed] = useState(false);
+  const [chosenOption, setChosenOption] = useState(null);
+  const [guess, setGuess] = useState({
+    isGuessed: false,
+    isCorrect: undefined,
+  });
   const [wordTranslations, setWordTranslations] = useState([]);
   const [wordData, setWordData] = useState({
     meanings: [],
@@ -56,8 +78,8 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
       });
     });
 
-    wordSynonyms = [...new Set(wordSynonyms)].slice(0, maxSynonymsToShow);
-    wordAntonyms = [...new Set(wordAntonyms)].slice(0, maxSynonymsToShow);
+    wordSynonyms = [...new Set(wordSynonyms)].slice(0, MAX_SYNONYMS_TO_SHOW);
+    wordAntonyms = [...new Set(wordAntonyms)].slice(0, MAX_SYNONYMS_TO_SHOW);
 
     setWordSynonyms(wordSynonyms);
     setWordAntonyms(wordAntonyms);
@@ -89,7 +111,6 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
     let currentWord = data[0].word.toLowerCase();
     wordExamplesLocal = data[0].meanings.map((item) => {
       let currentExample = item.definitions[0].example;
-      console.log(currentExample);
       if (!currentExample) {
         return;
       }
@@ -103,10 +124,8 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
         wordExample: highlightWord(`${currentWord}`, currentExample),
       };
     });
-    console.log(wordExamplesLocal);
     wordExamplesLocal = wordExamplesLocal.filter((example) => example);
 
-    console.log(wordExamplesLocal);
     return wordExamplesLocal;
   }
 
@@ -131,7 +150,6 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
   }
 
   function highlightWord(word, string) {
-    console.log(word, string);
     if (
       string.includes(` ${word} `) ||
       string.startsWith(word) ||
@@ -238,8 +256,251 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
   }, [currentWordIndex, currentCategoryWords]);
   const { word, meanings, phonetics } = wordData;
 
+  function shuffle(array) {
+    let currentIndex = array.length,
+      randomIndex;
+
+    // While there remain elements to shuffle...
+    while (currentIndex != 0) {
+      // Pick a remaining element...
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+
+      // And swap it with the current element.
+      [array[currentIndex], array[randomIndex]] = [
+        array[randomIndex],
+        array[currentIndex],
+      ];
+    }
+
+    return array;
+  }
+
+  function generateQuizOptions() {
+    // Reset guess and hint.
+    setGuess({ isGuessed: false, isCorrect: undefined });
+    setIsHintUsed(false);
+    // At start quiz options contain only the current word.
+    let generatedQuizOptions = [currentWord];
+    // If current category has less than 16 words than randomly choose another one.
+    let categoryToChoose = currentCategoryWords;
+    if (categoryToChoose.length < 16) {
+      categoryToChoose =
+        levels[Math.floor(Math.random() * levels.length)].levelWordsArray;
+    }
+    for (let i = 0; i < OPTIONS_NUMBER - 1; i++) {
+      let randomOption;
+      // While option isn't unique, randomly choose another one.
+      do {
+        randomOption =
+          categoryToChoose[Math.floor(Math.random() * categoryToChoose.length)];
+      } while (generatedQuizOptions.includes(randomOption));
+      // Then add it to the array.
+      generatedQuizOptions.push(randomOption);
+    }
+    generatedQuizOptions = shuffle(generatedQuizOptions);
+    generatedQuizOptions = generatedQuizOptions.map((el) => {
+      return { option: el };
+    });
+    setQuizOptions(generatedQuizOptions);
+  }
+
+  function checkOption(e) {
+    let chosenOption = e.target.textContent;
+    setChosenOption(chosenOption);
+    if (chosenOption === currentWord) {
+      setGuess({ isGuessed: true, isCorrect: true });
+      setComboNumber(comboNumber + 1);
+    } else {
+      setGuess({ isGuessed: true, isCorrect: false });
+      setComboNumber(0);
+    }
+  }
+
+  useEffect(() => {
+    if (currentMode === MODES.QUIZ && currentCategoryWords.length !== 0) {
+      generateQuizOptions();
+    }
+  }, [currentMode, currentWordIndex, currentCategoryWords]);
+
+  function handleHint() {
+    setQuizOptions((prev) => {
+      let randomOption;
+      do {
+        randomOption = prev[Math.floor(Math.random() * prev.length)].option;
+      } while (randomOption === currentWord);
+      console.log(randomOption);
+      let newOptions = prev.map((option) => {
+        if (option.option === randomOption) {
+          return { option: option.option, isHinted: true };
+        } else {
+          return option;
+        }
+      });
+      console.log(newOptions);
+      return newOptions;
+    });
+    setIsHintUsed(true);
+  }
+
   if (isWordLoading) {
     return <h1>Loading...</h1>;
+  }
+
+  if (currentMode === MODES.QUIZ) {
+    return (
+      <div className="word quiz">
+        <h2 className="word__translation">{wordTranslations[0]}</h2>
+        <div className="quiz__options-container">
+          <div className="quiz__hint-container">
+            {!isHintUsed && (
+              <button className="quiz__hint" onClick={handleHint}>
+                <img src={bulbIcon} alt="" />
+              </button>
+            )}
+          </div>
+          <div className="quiz__options">
+            {quizOptions.map((option, index) => {
+              return (
+                <button
+                  key={index}
+                  className={`quiz__option ${
+                    option.isHinted ? "is-hinted" : ""
+                  }`}
+                  type="button"
+                  onClick={!option.isHinted ? checkOption : null}
+                >
+                  {option.option}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+        {guess.isGuessed && <div className="dark-bg"></div>}
+        <div
+          className={`quiz__word-modal ${guess.isGuessed ? "show" : "hide"} ${
+            guess.isCorrect ? "correct" : "wrong"
+          }`}
+        >
+          <span className="quiz__arrow-up">
+            <IoIosArrowUp />
+          </span>
+          <div className="quiz__word-modal-top">
+            <div className="quiz__combo">
+              Combo
+              <br />
+              <span>{comboNumber}</span>
+            </div>
+            <div className="quiz__correct-icon">
+              {guess.isCorrect ? <IoMdCheckmark /> : <IoMdClose />}
+            </div>
+          </div>
+          <div className="quiz__short-info">
+            {guess.isCorrect ? (
+              <div
+                onClick={playWordAudio}
+                className={`word__audio-container ${
+                  phonetics[0].audio && "has-audio"
+                }`}
+              >
+                <h2 className="word__label">{word}</h2>
+                <h2 className="word__translation">{wordTranslations[0]}</h2>
+                <h4 className="word__phonetic">
+                  {phonetics[0].audio && <MdVolumeUp />}
+                  {phonetics[0].text}
+                  {phonetics[0].audio && (
+                    <audio ref={wordAudio} src={phonetics[0].audio}></audio>
+                  )}
+                </h4>
+              </div>
+            ) : (
+              <h2 className="word__label wrong-option">{chosenOption}</h2>
+            )}
+          </div>
+          <BottomToolbar
+            currentCategoryWords={currentCategoryWords}
+            isCorrect={guess.isCorrect}
+          />
+        </div>
+
+        {/* <div
+          onClick={playWordAudio}
+          className={`word__audio-container ${
+            phonetics[0].audio && "has-audio"
+          }`}
+        >
+          <h2 className="word__label">{word}</h2>
+          <h4 className="word__phonetic">
+            {phonetics[0].audio && <MdVolumeUp />}
+            {phonetics[0].text}
+            {phonetics[0].audio && (
+              <audio ref={wordAudio} src={phonetics[0].audio}></audio>
+            )}
+          </h4>
+        </div>
+
+        <div>
+          <h5 className="word__part-of-speech">
+            {meanings.map((meaning) => {
+              return `${convertPartOfSpeech(meaning.partOfSpeech)} `;
+            })}
+          </h5>
+        </div>
+        <div className="word__usage">
+          {wordExamples.length > 0 && (
+            <div className="word__examples">
+              <h4 className="word__example-label">Examples</h4>
+              {wordExamples.map((wordExample, index) => {
+                return (
+                  <div key={index} className="word__example-container">
+                    <h4
+                      className="word__example"
+                      dangerouslySetInnerHTML={{
+                        __html: wordExample.wordExample,
+                      }}
+                    ></h4>
+                    <h5
+                      className="word__example-translation"
+                      dangerouslySetInnerHTML={{
+                        __html: wordExample.wordExampleTranslation,
+                      }}
+                    ></h5>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+          <div className="word__synonyms-antonyms">
+            {wordSynonyms.length > 0 && (
+              <div className="word__synonyms-container">
+                <h4 className="word__synonyms-label">Synonyms</h4>
+                <p className="word__synonyms">
+                  {wordSynonyms.map((word, index) => {
+                    if (index === wordSynonyms.length - 1) {
+                      return `${word}`;
+                    }
+                    return `${word}, `;
+                  })}
+                </p>
+              </div>
+            )}
+            {wordAntonyms.length > 0 && (
+              <div className="word__antonyms-container">
+                <h4 className="word__antonyms-label">Antonyms</h4>
+                <p className="word__antonyms">
+                  {wordAntonyms.map((word, index) => {
+                    if (index === wordAntonyms.length - 1) {
+                      return `${word}`;
+                    }
+                    return `${word}, `;
+                  })}
+                </p>
+              </div>
+            )}
+          </div>
+        </div> */}
+      </div>
+    );
   }
 
   return (

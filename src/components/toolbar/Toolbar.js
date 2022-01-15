@@ -3,7 +3,7 @@ import { MdPlayArrow, MdChromeReaderMode, MdLanguage } from "react-icons/md";
 import { GiHamburgerMenu } from "react-icons/gi";
 import "./toolbar.css";
 import { AiOutlineSearch } from "react-icons/ai";
-import { useGlobalContext } from "./../../context";
+import { MODES, useGlobalContext } from "./../../context";
 import langs from "./../../resources/langData";
 
 const Toolbar = ({ currentCategory, currentCategoryWords }) => {
@@ -15,6 +15,7 @@ const Toolbar = ({ currentCategory, currentCategoryWords }) => {
     lang,
     setIsWordListOpened,
     targetLang,
+    currentMode,
   } = useGlobalContext();
 
   function getLangsIcon(lang) {
@@ -64,13 +65,16 @@ const Toolbar = ({ currentCategory, currentCategoryWords }) => {
         <button type="button" className="toolbar__search">
           <AiOutlineSearch />
         </button>
-        <button
-          type="button"
-          className="toolbar__words-list"
-          onClick={() => setIsWordListOpened(true)}
-        >
-          <GiHamburgerMenu />
-        </button>
+        {currentMode !== MODES.QUIZ && (
+          <button
+            type="button"
+            className="toolbar__words-list"
+            onClick={() => setIsWordListOpened(true)}
+          >
+            <GiHamburgerMenu />
+          </button>
+        )}
+
         <button
           type="button"
           className="toolbar__mode"

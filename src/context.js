@@ -35,6 +35,7 @@ const AppProvider = ({ children }) => {
   const [isWordListOpened, setIsWordListOpened] = useState(false);
   const [isModeMenuOpened, setIsModeMenuOpened] = useState(false);
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
+  const [comboNumber, setComboNumber] = useState(0);
   const [starredList, setStarredList] = useState(starredListData);
   const [myAddedLists, setMyAddedLists] = useState(myListsArray);
   const [unknownUncertainList, setUnknownUncertainList] = useState(
@@ -151,7 +152,9 @@ const AppProvider = ({ children }) => {
         isModeMenuOpened,
         currentMode,
         alert,
+        comboNumber,
         showAlert,
+        setComboNumber,
         setAlert,
         getCategoryWords,
         setCurrentMode,

@@ -6,7 +6,7 @@ const Alert = ({ msg, removeAlert, dependency }) => {
   useEffect(() => {
     const timeout = setTimeout(() => {
       removeAlert();
-    }, 3000);
+    }, 3300);
     const fadeInTimeout = setTimeout(() => {
       alertRef.current.className += " show";
     }, 50);
