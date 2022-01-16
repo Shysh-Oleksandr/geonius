@@ -8,6 +8,7 @@ import {
 } from "react-icons/io";
 import { MdReplay } from "react-icons/md";
 import { useState } from "react/cjs/react.development";
+import { MY_LISTS_NAMES } from "../../resources/myListsData";
 import { MODES, useGlobalContext } from "./../../context";
 import MyListBtn from "./../MyListBtn";
 import "./bottomToolbar.css";
@@ -35,6 +36,8 @@ const BottomToolbar = ({
     setUnknownUncertainList,
     currentMode,
     showAlert,
+    lang,
+    targetLang,
   } = useGlobalContext();
 
   const [starred, setStarred] = useState(false);
@@ -70,15 +73,18 @@ const BottomToolbar = ({
   useEffect(() => {
     setMyLists((prevMyLists) => {
       let newMyLists = prevMyLists.map((prevMyList) => {
-        if (prevMyList.listName === "Unknown + Uncertain") {
+        if (prevMyList.listName === MY_LISTS_NAMES.UNKNOWN_UNCERTAIN) {
           return unknownUncertainList;
+        } else if (prevMyList.listName === MY_LISTS_NAMES.STARRED) {
+          return starredList;
         } else {
           return prevMyList;
         }
       });
+      console.log(newMyLists);
       return newMyLists;
     });
-  }, [unknownUncertainList]);
+  }, [unknownUncertainList, starredList]);
 
   function handleKeyPress(e) {
     if (currentMode === MODES.QUIZ && !guess.isCorrect && !showWordInfo) return;
@@ -108,7 +114,10 @@ const BottomToolbar = ({
 
     // For the starred list.
     // If the word is in starred list then make starred active. Otherwise removes active.
-    starredList.listWordsArray.includes(currentWord)
+    starredList.listWordsArray.filter((starredObject) => {
+      console.log(starredObject.word);
+      return starredObject.word === currentWord;
+    }).length !== 0
       ? setStarred(true)
       : setStarred(false);
   }
@@ -136,11 +145,15 @@ const BottomToolbar = ({
     if (!e) e = window.event;
     e.stopPropagation();
     if (!starred) {
-      starredListArray.listWordsArray.unshift(currentWord);
+      starredListArray.listWordsArray.unshift({
+        word: currentWord,
+        sourceLang: lang,
+        targetLang: targetLang,
+      });
       showAlert(true, "Saved to Starred");
     } else {
       starredListArray.listWordsArray = starredListArray.listWordsArray.filter(
-        (word) => word !== currentWord
+        (starredObject) => starredObject.word !== currentWord
       );
       showAlert(true, "Removed from Starred");
     }
@@ -159,7 +172,7 @@ const BottomToolbar = ({
       myAddedLists.map((myList) => {
         myList.className = myList.className.replace(" active", "");
         myList.listWordsArray = myList.listWordsArray.filter(
-          (word) => word !== currentWord
+          (wordInfo) => wordInfo.word !== currentWord
         );
       });
     }
@@ -170,7 +183,11 @@ const BottomToolbar = ({
     } else {
       clearMyLists();
       // Add the current word to the current list and make current list btn active.
-      currentList.listWordsArray.unshift(currentWord);
+      currentList.listWordsArray.unshift({
+        word: currentWord,
+        sourceLang: lang,
+        targetLang: targetLang,
+      });
       currentList.className += " active";
 
       showAlert(true, `Added to "${listName.toLowerCase()}" words list.`);

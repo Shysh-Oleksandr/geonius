@@ -10,8 +10,10 @@ export const MODES = {
   QUIZ: "Quiz",
   RANDOM: "Random",
 };
+
 const AppProvider = ({ children }) => {
   const starredListData = getListData("Starred");
+
   const unknownUncertainListData = getListData("Unknown + Uncertain");
   const listsNames = ["Unknown", "Uncertain", "Learned"];
 

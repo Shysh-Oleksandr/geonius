@@ -70,9 +70,9 @@ const Toolbar = ({ currentCategory, currentCategoryWords }) => {
         >
           <MdLanguage />
         </button>
-        <button type="button" className="toolbar__search">
+        {/* <button type="button" className="toolbar__search">
           <AiOutlineSearch />
-        </button>
+        </button> */}
         {currentMode !== MODES.QUIZ && (
           <button
             type="button"
