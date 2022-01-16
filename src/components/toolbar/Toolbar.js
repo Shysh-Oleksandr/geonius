@@ -16,6 +16,8 @@ const Toolbar = ({ currentCategory, currentCategoryWords }) => {
     setIsWordListOpened,
     targetLang,
     currentMode,
+    currentWordSourceLang,
+    currentWordTargetLang,
   } = useGlobalContext();
 
   function getLangsIcon(lang) {
@@ -53,12 +55,12 @@ const Toolbar = ({ currentCategory, currentCategoryWords }) => {
       <div className="toolbar__right">
         <div className="toolbar__curr-langs">
           <img
-            src={getLangsIcon(lang)}
+            src={getLangsIcon(currentWordSourceLang || lang)}
             alt="current language"
             className="toolbar__curr-lang-img"
           />
           <img
-            src={getLangsIcon(targetLang)}
+            src={getLangsIcon(currentWordTargetLang || targetLang)}
             alt="target language"
             className="toolbar__target-lang-img"
           />

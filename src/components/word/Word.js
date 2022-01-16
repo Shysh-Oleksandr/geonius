@@ -25,7 +25,9 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
     comboNumber,
     setGuess,
     setComboNumber,
+    setCurrentWordSourceLang,
     showWordInfo,
+    setCurrentWordTargetLang,
     setShowWordInfo,
   } = useGlobalContext();
 
@@ -183,11 +185,18 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
     }
   }
 
-  const fetchWordInfo = (word, targetLang, lang) => {
+  const fetchWordInfo = (wordInfo) => {
+    const word = wordInfo.word || wordInfo;
+    const wordSourceLang = wordInfo.sourceLang || lang;
+    const wordTargetLang = wordInfo.targetLang || targetLang;
+    setCurrentWordSourceLang(wordSourceLang);
+    setCurrentWordTargetLang(wordTargetLang);
     setIsWordLoading(true);
     let wordExamplesLocal;
 
-    fetch(`https://api.dictionaryapi.dev/api/v2/entries/${targetLang}/${word}`)
+    fetch(
+      `https://api.dictionaryapi.dev/api/v2/entries/${wordTargetLang}/${word}`
+    )
       .then((response) => checkResponse(response))
       .then(function (data) {
         data[0].word = filterWord(data[0].word);
@@ -199,7 +208,7 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
         setWordExamples(wordExamplesLocal);
 
         // Fetch another API
-        return fetchTranslation(word, targetLang, lang);
+        return fetchTranslation(word, wordTargetLang, wordSourceLang);
       })
       .then((response) => checkResponse(response))
       .then(function (userData) {
@@ -223,7 +232,7 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
               return item.wordExample;
             })
             .map((wordExample) =>
-              fetchTranslation(wordExample, targetLang, lang)
+              fetchTranslation(wordExample, wordTargetLang, wordSourceLang)
             )
         );
       })
@@ -252,7 +261,7 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
 
   useEffect(() => {
     if (currentCategoryWords.length > 0) {
-      fetchWordInfo(currentCategoryWords[currentWordIndex], targetLang, lang);
+      fetchWordInfo(currentCategoryWords[currentWordIndex]);
     }
   }, [currentWordIndex, currentCategoryWords]);
   const { word, meanings, phonetics } = wordData;

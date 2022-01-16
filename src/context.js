@@ -39,6 +39,8 @@ const AppProvider = ({ children }) => {
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [comboNumber, setComboNumber] = useState(0);
   const [starredList, setStarredList] = useState(starredListData);
+  const [currentWordSourceLang, setCurrentWordSourceLang] = useState("en");
+  const [currentWordTargetLang, setCurrentWordTargetLang] = useState("de");
   const [myAddedLists, setMyAddedLists] = useState(myListsArray);
   const [unknownUncertainList, setUnknownUncertainList] = useState(
     unknownUncertainListData
@@ -172,9 +174,13 @@ const AppProvider = ({ children }) => {
         comboNumber,
         randomMode,
         guess,
+        currentWordSourceLang,
         showWordInfo,
+        currentWordTargetLang,
+        setCurrentWordSourceLang,
         showAlert,
         setShowWordInfo,
+        setCurrentWordTargetLang,
         setGuess,
         setRandomMode,
         setComboNumber,

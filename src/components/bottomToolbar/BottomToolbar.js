@@ -81,7 +81,6 @@ const BottomToolbar = ({
           return prevMyList;
         }
       });
-      console.log(newMyLists);
       return newMyLists;
     });
   }, [unknownUncertainList, starredList]);
@@ -104,7 +103,16 @@ const BottomToolbar = ({
         // Remove active from each one.
         myList.className = myList.className.replace(" active", "");
         // If the word is in a list, make the list active.
-        if (myList.listWordsArray.includes(currentWord)) {
+        if (
+          myList.listWordsArray.filter((wordInfo) => {
+            if (currentWord) {
+              return (
+                wordInfo.word === currentWord ||
+                wordInfo.word === currentWord.word
+              );
+            }
+          }).length !== 0
+        ) {
           myList.className += " active";
         }
         return myList;
@@ -114,9 +122,14 @@ const BottomToolbar = ({
 
     // For the starred list.
     // If the word is in starred list then make starred active. Otherwise removes active.
+
     starredList.listWordsArray.filter((starredObject) => {
-      console.log(starredObject.word);
-      return starredObject.word === currentWord;
+      if (currentWord) {
+        return (
+          starredObject.word === currentWord ||
+          starredObject.word === currentWord.word
+        );
+      }
     }).length !== 0
       ? setStarred(true)
       : setStarred(false);
