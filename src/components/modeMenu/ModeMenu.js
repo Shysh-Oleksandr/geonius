@@ -1,11 +1,17 @@
-import React, { useRef, useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { MdChromeReaderMode } from "react-icons/md";
 import { MODES, useGlobalContext } from "./../../context";
 import "./modeMenu.css";
 
 const ModeMenu = () => {
-  const { isModeMenuOpened, setIsModeMenuOpened, currentMode, setCurrentMode } =
-    useGlobalContext();
+  const {
+    isModeMenuOpened,
+    setIsModeMenuOpened,
+    currentMode,
+    setCurrentMode,
+    randomMode,
+    setRandomMode,
+  } = useGlobalContext();
   const ref = useRef();
   useEffect(() => {
     const checkIfClickedOutside = (e) => {
@@ -26,9 +32,15 @@ const ModeMenu = () => {
 
   function setMode(e) {
     let modeName = e.target.textContent;
-    setCurrentMode(modeName);
+    if (modeName === MODES.RANDOM) {
+      setRandomMode(true);
+    } else {
+      setRandomMode(false);
+      setCurrentMode(modeName);
+    }
     setIsModeMenuOpened(false);
   }
+
   return (
     <div className={`mode-menu__wrapper`}>
       <div className="mode-menu" ref={ref}>
@@ -44,7 +56,9 @@ const ModeMenu = () => {
               <h4
                 key={index}
                 className={`mode-menu__option ${
-                  mode === currentMode && "active"
+                  randomMode && mode === MODES.RANDOM
+                    ? "active"
+                    : !randomMode && mode === currentMode && "active"
                 }`}
                 onClick={setMode}
               >

@@ -1,7 +1,7 @@
 import React from "react";
 import { IoMdCheckmark } from "react-icons/io";
 import { MdReplay } from "react-icons/md";
-import { useGlobalContext } from "./../../context";
+import { MODES, useGlobalContext } from "./../../context";
 import "./categoryCompletedModal.css";
 
 const CategoryCompletedModal = () => {
@@ -10,8 +10,19 @@ const CategoryCompletedModal = () => {
     setCurrentCategoryWords,
     setIsCategoryCompleted,
     setCurrentCategory,
+    setShowWordInfo,
+
     setCurrentWordIndex,
+    currentMode,
+    setGuess,
   } = useGlobalContext();
+
+  function resetGuess() {
+    if (currentMode === MODES.QUIZ) {
+      setGuess({ isGuessed: false, isCorrect: undefined });
+      setShowWordInfo(false);
+    }
+  }
 
   function handleNewCategory() {
     setIsCategoryMenuOpened(true);
@@ -19,10 +30,12 @@ const CategoryCompletedModal = () => {
     setCurrentCategory(null);
     setIsCategoryCompleted(false);
     setCurrentWordIndex(0);
+    resetGuess();
   }
   function handleCurrentCategory() {
     setIsCategoryCompleted(false);
     setCurrentWordIndex(0);
+    resetGuess();
   }
   return (
     <div className={`category-completed__wrapper`}>

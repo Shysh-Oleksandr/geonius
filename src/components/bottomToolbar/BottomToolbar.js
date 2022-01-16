@@ -18,6 +18,7 @@ const BottomToolbar = ({
   setGuess,
   setShowWordInfo,
   showWordInfo,
+  guess,
 }) => {
   const {
     setCurrentWordIndex,
@@ -52,7 +53,13 @@ const BottomToolbar = ({
       // Cleanup the event listener
       document.removeEventListener("keydown", handleKeyPress);
     };
-  }, [currentWordIndex, currentCategoryWords, currentMode]);
+  }, [
+    currentWordIndex,
+    currentCategoryWords,
+    currentMode,
+    showWordInfo,
+    guess,
+  ]);
 
   useEffect(() => {
     if (isCategoryCompleted) {
@@ -74,6 +81,7 @@ const BottomToolbar = ({
   }, [unknownUncertainList]);
 
   function handleKeyPress(e) {
+    if (currentMode === MODES.QUIZ && !guess.isCorrect && !showWordInfo) return;
     if (e.key === "ArrowLeft" || e.key === "Backspace") {
       decrement();
     } else if (e.key === "ArrowRight" || e.key === "Enter") {

@@ -21,8 +21,12 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
     setIsCategoryCompleted,
     levels,
     currentMode,
+    guess,
     comboNumber,
+    setGuess,
     setComboNumber,
+    showWordInfo,
+    setShowWordInfo,
   } = useGlobalContext();
 
   const [quizOptions, setQuizOptions] = useState([
@@ -30,11 +34,7 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
   ]);
   const [isHintUsed, setIsHintUsed] = useState(false);
   const [chosenOption, setChosenOption] = useState(null);
-  const [showWordInfo, setShowWordInfo] = useState(false);
-  const [guess, setGuess] = useState({
-    isGuessed: false,
-    isCorrect: undefined,
-  });
+
   const [wordTranslations, setWordTranslations] = useState([]);
   const [wordData, setWordData] = useState({
     meanings: [],
@@ -511,6 +511,7 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
             setGuess={setGuess}
             setShowWordInfo={setShowWordInfo}
             showWordInfo={showWordInfo}
+            guess={guess}
           />
         </div>
       </div>

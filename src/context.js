@@ -8,7 +8,7 @@ export const MODES = {
   STUDY: "Study",
   SLIDE: "Slide",
   QUIZ: "Quiz",
-  ALL: "All (random)",
+  RANDOM: "Random",
 };
 const AppProvider = ({ children }) => {
   const starredListData = getListData("Starred");
@@ -42,6 +42,12 @@ const AppProvider = ({ children }) => {
     unknownUncertainListData
   );
   const [alert, setAlert] = useState({ show: false, msg: "" });
+  const [randomMode, setRandomMode] = useState(false);
+  const [guess, setGuess] = useState({
+    isGuessed: false,
+    isCorrect: undefined,
+  });
+  const [showWordInfo, setShowWordInfo] = useState(false);
 
   // const [searchTerm, setSearchTerm] = useState("a");
 
@@ -124,6 +130,15 @@ const AppProvider = ({ children }) => {
   }, [words]);
 
   useEffect(() => {
+    if (randomMode) {
+      const modesArray = [MODES.SLIDE, MODES.QUIZ];
+      const randomElement =
+        modesArray[Math.floor(Math.random() * modesArray.length)];
+      setCurrentMode(randomElement);
+    }
+  }, [randomMode, currentWordIndex]);
+
+  useEffect(() => {
     setCurrentCategoryWords(getCategoryWords(currentCategory));
   }, [currentCategory]);
 
@@ -153,7 +168,13 @@ const AppProvider = ({ children }) => {
         currentMode,
         alert,
         comboNumber,
+        randomMode,
+        guess,
+        showWordInfo,
         showAlert,
+        setShowWordInfo,
+        setGuess,
+        setRandomMode,
         setComboNumber,
         setAlert,
         getCategoryWords,
