@@ -174,7 +174,7 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
 
   function filterWord(word) {
     let filteredWord = word.replace(/[^'’ a-zA-Z\u0400-\u04FF]/g, "");
-    return filteredWord !== "" ? filteredWord : null;
+    return filteredWord.trim() !== "" ? filteredWord : null;
   }
 
   function checkResponse(response) {
@@ -186,7 +186,7 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
   }
 
   const fetchWordInfo = (wordInfo) => {
-    const word = wordInfo.word || wordInfo;
+    const word = wordInfo.word;
     const wordSourceLang = wordInfo.sourceLang || lang;
     const wordTargetLang = wordInfo.targetLang || targetLang;
     setCurrentWordSourceLang(wordSourceLang);
@@ -224,6 +224,7 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
               .filter((item) => item)
           ),
         ];
+
         setWordTranslations(wordTranslations);
 
         return Promise.all(
@@ -292,7 +293,7 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
     setShowWordInfo(false);
     setIsHintUsed(false);
     // At start quiz options contain only the current word.
-    let generatedQuizOptions = [currentWord];
+    let generatedQuizOptions = [currentWord.word];
     // If current category has less than 16 words than randomly choose another one.
     let categoryToChoose = currentCategoryWords;
     if (categoryToChoose.length < 16) {
@@ -304,7 +305,8 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
       // While option isn't unique, randomly choose another one.
       do {
         randomOption =
-          categoryToChoose[Math.floor(Math.random() * categoryToChoose.length)];
+          categoryToChoose[Math.floor(Math.random() * categoryToChoose.length)]
+            .word;
       } while (generatedQuizOptions.includes(randomOption));
       // Then add it to the array.
       generatedQuizOptions.push(randomOption);
@@ -319,7 +321,7 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
   function checkOption(e) {
     let chosenOption = e.target.textContent;
     setChosenOption(chosenOption);
-    if (chosenOption === currentWord) {
+    if (chosenOption === currentWord.word) {
       setGuess({ isGuessed: true, isCorrect: true });
       setComboNumber(comboNumber + 1);
     } else {

@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { AiFillStar } from "react-icons/ai";
 import {
   IoIosArrowBack,
@@ -8,7 +8,7 @@ import {
 } from "react-icons/io";
 import { MdReplay } from "react-icons/md";
 import { useState } from "react/cjs/react.development";
-import { MY_LISTS_NAMES } from "../../resources/myListsData";
+import { MY_LISTS_ICONS, MY_LISTS_NAMES } from "../../resources/myListsData";
 import { MODES, useGlobalContext } from "./../../context";
 import MyListBtn from "./../MyListBtn";
 import "./bottomToolbar.css";
@@ -83,7 +83,7 @@ const BottomToolbar = ({
       });
       return newMyLists;
     });
-  }, [unknownUncertainList, starredList]);
+  }, [unknownUncertainList, starredList, myAddedLists, starred]);
 
   function handleKeyPress(e) {
     if (currentMode === MODES.QUIZ && !guess.isCorrect && !showWordInfo) return;
@@ -106,10 +106,7 @@ const BottomToolbar = ({
         if (
           myList.listWordsArray.filter((wordInfo) => {
             if (currentWord) {
-              return (
-                wordInfo.word === currentWord ||
-                wordInfo.word === currentWord.word
-              );
+              return wordInfo.word === currentWord.word;
             }
           }).length !== 0
         ) {
@@ -150,7 +147,9 @@ const BottomToolbar = ({
   function decrement(e) {
     if (!e) e = window.event;
     e.stopPropagation();
-    currentWordIndex !== 0 && setCurrentWordIndex(currentWordIndex - 1);
+    currentWordIndex !== 0
+      ? setCurrentWordIndex(currentWordIndex - 1)
+      : showAlert(true, "The first item.");
   }
 
   const handleStarredClick = (e) => {
@@ -159,14 +158,14 @@ const BottomToolbar = ({
     e.stopPropagation();
     if (!starred) {
       starredListArray.listWordsArray.unshift({
-        word: currentWord,
+        word: currentWord.word,
         sourceLang: lang,
         targetLang: targetLang,
       });
       showAlert(true, "Saved to Starred");
     } else {
       starredListArray.listWordsArray = starredListArray.listWordsArray.filter(
-        (starredObject) => starredObject.word !== currentWord
+        (starredObject) => starredObject.word !== currentWord.word
       );
       showAlert(true, "Removed from Starred");
     }
@@ -185,7 +184,7 @@ const BottomToolbar = ({
       myAddedLists.map((myList) => {
         myList.className = myList.className.replace(" active", "");
         myList.listWordsArray = myList.listWordsArray.filter(
-          (wordInfo) => wordInfo.word !== currentWord
+          (wordInfo) => wordInfo.word !== currentWord.word
         );
       });
     }
@@ -197,7 +196,7 @@ const BottomToolbar = ({
       clearMyLists();
       // Add the current word to the current list and make current list btn active.
       currentList.listWordsArray.unshift({
-        word: currentWord,
+        word: currentWord.word,
         sourceLang: lang,
         targetLang: targetLang,
       });
@@ -235,7 +234,7 @@ const BottomToolbar = ({
               <MyListBtn
                 key={index}
                 className={`bottom-toolbar__${myList.className}`}
-                icon={myList.icon}
+                icon={MY_LISTS_ICONS[index + 1].icon}
                 onClick={() => handleAddToList(myList.listName)}
               />
             );
@@ -334,7 +333,7 @@ const BottomToolbar = ({
             <MyListBtn
               key={index}
               className={`bottom-toolbar__${myList.className}`}
-              icon={myList.icon}
+              icon={MY_LISTS_ICONS[index + 1].icon}
               onClick={() => handleAddToList(myList.listName)}
             />
           );

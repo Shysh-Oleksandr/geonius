@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import langs from "./resources/langData";
 import levelsData from "./resources/levelsData";
 import myListsData from "./resources/myListsData";
+import { useLocalStorage } from "./components/LocalStorage";
 
 const AppContext = React.createContext();
 export const MODES = {
@@ -12,38 +13,40 @@ export const MODES = {
 };
 
 const AppProvider = ({ children }) => {
-  const starredListData = getListData("Starred");
-
-  const unknownUncertainListData = getListData("Unknown + Uncertain");
-  const listsNames = ["Unknown", "Uncertain", "Learned"];
-
-  const myListsArray = myListsData.filter((myList) =>
-    listsNames.includes(myList.listName)
+  const [myLists, setMyLists] = useLocalStorage("myLists", myListsData);
+  const [levels, setLevels] = useLocalStorage("levels", levelsData);
+  const [words, setWords] = useLocalStorage("words", []);
+  const [currentCategory, setCurrentCategory] = useLocalStorage(
+    "currentCategory",
+    null
   );
+  const [currentWordIndex, setCurrentWordIndex] = useLocalStorage(
+    "currentWordIndex",
+    0
+  );
+  const [comboNumber, setComboNumber] = useLocalStorage("comboNumber", 0);
+  const [currentMode, setCurrentMode] = useLocalStorage(
+    "currentMode",
+    MODES.STUDY
+  );
+  const [isLangChosen, setIsLangChosen] = useLocalStorage(
+    "isLangChosen",
+    false
+  );
+  const [lang, setLang] = useLocalStorage("lang", "en");
+  const [targetLang, setTargetLang] = useLocalStorage("targetLang", "de");
 
-  const [levels, setLevels] = useState(levelsData);
-  const [isLangChosen, setIsLangChosen] = useState(false);
-  const [words, setWords] = useState([]);
-  const [lang, setLang] = useState("en");
   const [loading, setLoading] = useState(false);
-  const [targetLang, setTargetLang] = useState("es");
-  const [myLists, setMyLists] = useState(myListsData);
-  const [currentCategory, setCurrentCategory] = useState(null);
   const [currentCategoryWords, setCurrentCategoryWords] = useState([]);
-  const [currentList, setCurrentList] = useState(null);
-  const [currentMode, setCurrentMode] = useState(MODES.STUDY);
-  const [isCategoryMenuOpened, setIsCategoryMenuOpened] = useState(true);
+  const [isCategoryMenuOpened, setIsCategoryMenuOpened] = useState(false);
   const [isCategoryCompleted, setIsCategoryCompleted] = useState(false);
   const [isWordListOpened, setIsWordListOpened] = useState(false);
   const [isModeMenuOpened, setIsModeMenuOpened] = useState(false);
-  const [currentWordIndex, setCurrentWordIndex] = useState(0);
-  const [comboNumber, setComboNumber] = useState(0);
-  const [starredList, setStarredList] = useState(starredListData);
+  const [starredList, setStarredList] = useState(getListData("Starred"));
   const [currentWordSourceLang, setCurrentWordSourceLang] = useState("en");
   const [currentWordTargetLang, setCurrentWordTargetLang] = useState("de");
-  const [myAddedLists, setMyAddedLists] = useState(myListsArray);
   const [unknownUncertainList, setUnknownUncertainList] = useState(
-    unknownUncertainListData
+    getListData("Unknown + Uncertain")
   );
   const [alert, setAlert] = useState({ show: false, msg: "" });
   const [randomMode, setRandomMode] = useState(false);
@@ -53,8 +56,17 @@ const AppProvider = ({ children }) => {
   });
   const [showWordInfo, setShowWordInfo] = useState(false);
 
-  // const [searchTerm, setSearchTerm] = useState("a");
+  const listsNames = ["Unknown", "Uncertain", "Learned"];
+  const myListsArray = myLists.filter((myList) =>
+    listsNames.includes(myList.listName)
+  );
+  const [myAddedLists, setMyAddedLists] = useState(myListsArray);
 
+  function getListData(listName) {
+    return myLists.find((list) => list.listName === listName);
+  }
+
+  // const [searchTerm, setSearchTerm] = useState("a");
   const selectCurrentLanguage = (event) => {
     let value = event.target.value;
     setLang(value);
@@ -78,7 +90,9 @@ const AppProvider = ({ children }) => {
       if (curr > words.length) {
         curr = words.length;
       }
-      let levelWordsArray = words.slice(prev, curr);
+      let levelWordsArray = words.slice(prev, curr).map((word) => {
+        return { word: word };
+      });
       setLevels((prevLevels) => {
         let newLevels = prevLevels.map((prevLevel) => {
           if (prevLevel.levelIndex === index) {
@@ -117,15 +131,17 @@ const AppProvider = ({ children }) => {
     return resultWords;
   };
 
-  function getListData(listName) {
-    return myListsData.find((list) => list.listName === listName);
-  }
-
   let currLangName = getLangName(lang);
 
   const showAlert = (show = false, msg = "") => {
     setAlert({ show, msg });
   };
+
+  useEffect(() => {
+    if (isLangChosen) {
+      setWords(langs.find((lang) => lang.langCode === targetLang).langWords);
+    }
+  }, []);
 
   useEffect(() => {
     if (isLangChosen) {
@@ -155,7 +171,6 @@ const AppProvider = ({ children }) => {
         targetLang,
         levels,
         myLists,
-        currentList,
         loading,
         currentCategory,
         levelsByWords,

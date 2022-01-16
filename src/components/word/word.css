@@ -352,6 +352,7 @@
 .full-info {
   background-color: #fff !important;
   padding: 0;
+  cursor: initial;
 }
 
 .full-info .word__translations {

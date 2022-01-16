@@ -2,7 +2,7 @@ const levelsData = [
   {
     levelIndex: 0,
     levelName: "A1 (Begginer 1)",
-    levelWordsNumber: 20,
+    levelWordsNumber: 500,
     levelWordsArray: [],
   },
   {

@@ -3,6 +3,7 @@ import Category from "../Category";
 import { AiFillFolder, BiCategory } from "./imports";
 import { useGlobalContext } from "./../../context";
 import "./categories.css";
+import { MY_LISTS_ICONS } from "../../resources/myListsData";
 
 const Categories = () => {
   const {
@@ -69,8 +70,8 @@ const Categories = () => {
                 key={index}
                 name={list.listName}
                 className={list.className}
-                icon={list.icon}
-                secondIcon={list.secondIcon}
+                icon={MY_LISTS_ICONS[index].icon}
+                secondIcon={MY_LISTS_ICONS[index].secondIcon}
                 openCategory={openCategory}
                 levelWords={list.listWordsArray}
               />

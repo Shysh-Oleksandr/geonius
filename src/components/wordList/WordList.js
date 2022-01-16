@@ -42,7 +42,11 @@ const WordList = ({ currentCategoryWords }) => {
   }, [isWordListOpened]);
 
   function openClickedWord(e) {
-    let wordIndex = currentCategoryWords.indexOf(e.target.textContent);
+    let foundWord = currentCategoryWords.find(
+      (wordInfo) => wordInfo.word === e.target.textContent
+    );
+    let wordIndex = currentCategoryWords.indexOf(foundWord);
+
     setCurrentWordIndex(wordIndex);
     setIsWordListOpened(false);
   }
@@ -53,7 +57,7 @@ const WordList = ({ currentCategoryWords }) => {
           Word list ({currentCategoryWords.length})
         </h3>
         <div className="word-list__words-container" ref={wordsContainerRef}>
-          {currentCategoryWords.map((word, index) => {
+          {currentCategoryWords.map((wordInfo, index) => {
             return (
               <h4
                 data-before={`${currentCategory} (${index + 1} / ${
@@ -61,16 +65,18 @@ const WordList = ({ currentCategoryWords }) => {
                 })`}
                 key={index}
                 ref={
-                  word === currentCategoryWords[currentWordIndex]
+                  wordInfo.word === currentCategoryWords[currentWordIndex].word
                     ? activeWordRef
                     : null
                 }
                 className={`word-list__word ${
-                  word === currentCategoryWords[currentWordIndex] && "active"
+                  wordInfo.word === currentCategoryWords[currentWordIndex].word
+                    ? "active"
+                    : ""
                 }`}
                 onClick={openClickedWord}
               >
-                {word}
+                {wordInfo.word}
               </h4>
             );
           })}
