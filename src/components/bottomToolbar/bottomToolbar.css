@@ -219,3 +219,22 @@
   background-color: #979797;
   color: #fff;
 }
+
+.quiz-mode .word__star {
+  position: absolute;
+  top: -2.5rem;
+  right: 2rem;
+  left: auto;
+  color: #9c8f8f;
+}
+
+.full-info .word__star {
+  position: fixed;
+  top: 1rem;
+  right: 4rem;
+}
+
+.quiz-mode .word__star:hover,
+.quiz-mode .word__star.active {
+  color: #fff;
+}

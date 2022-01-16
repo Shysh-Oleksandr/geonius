@@ -123,7 +123,10 @@ const BottomToolbar = ({
     currentWordIndex !== 0 && setCurrentWordIndex(currentWordIndex - 1);
   }
 
-  const handleStarredClick = (starredListArray) => {
+  const handleStarredClick = (e) => {
+    let starredListArray = starredList;
+    if (!e) e = window.event;
+    e.stopPropagation();
     if (!starred) {
       starredListArray.listWordsArray.unshift(currentWord);
       showAlert(true, "Saved to Starred");
@@ -177,6 +180,11 @@ const BottomToolbar = ({
   if (currentMode === MODES.QUIZ) {
     return (
       <div className="bottom-toolbar quiz-mode">
+        <MyListBtn
+          className={`word__star ${starred ? "active" : ""}`}
+          icon={<AiFillStar />}
+          onClick={(e) => handleStarredClick(e)}
+        />
         <div
           className="bottom-toolbar__my-list-btns"
           onClick={(e) => {
@@ -272,7 +280,7 @@ const BottomToolbar = ({
       <MyListBtn
         className={`word__star ${starred ? "active" : ""}`}
         icon={<AiFillStar />}
-        onClick={() => handleStarredClick(starredList)}
+        onClick={(e) => handleStarredClick(e)}
       />
 
       <button
