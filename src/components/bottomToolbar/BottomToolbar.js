@@ -48,7 +48,9 @@ const BottomToolbar = ({
   const currentWord = currentCategoryWords[currentWordIndex];
 
   useEffect(() => {
-    if (currentMode === MODES.SLIDE) setIsSlided(true);
+    if (currentMode === MODES.SLIDE) {
+      setIsSlided(true);
+    }
     checkListsForWord();
 
     document.addEventListener("keydown", handleKeyPress);
@@ -63,6 +65,18 @@ const BottomToolbar = ({
     showWordInfo,
     guess,
   ]);
+
+  useEffect(() => {
+    if (currentMode === MODES.SLIDE) {
+      if (isSlided) {
+        document.body.classList.add("locked");
+      } else {
+        document.body.classList.remove("locked");
+      }
+    } else {
+      document.body.classList.remove("locked");
+    }
+  }, [isSlided, currentMode]);
 
   useEffect(() => {
     if (isCategoryCompleted) {

@@ -64,19 +64,21 @@ const Categories = () => {
             </span>
             My lists
           </h3>
-          {myLists.map((list, index) => {
-            return (
-              <Category
-                key={index}
-                name={list.listName}
-                className={list.className}
-                icon={MY_LISTS_ICONS[index].icon}
-                secondIcon={MY_LISTS_ICONS[index].secondIcon}
-                openCategory={openCategory}
-                levelWords={list.listWordsArray}
-              />
-            );
-          })}
+          <div className="categories__container">
+            {myLists.map((list, index) => {
+              return (
+                <Category
+                  key={index}
+                  name={list.listName}
+                  className={list.className}
+                  icon={MY_LISTS_ICONS[index].icon}
+                  secondIcon={MY_LISTS_ICONS[index].secondIcon}
+                  openCategory={openCategory}
+                  levelWords={list.listWordsArray}
+                />
+              );
+            })}
+          </div>
         </div>
         <div className="categories__levels">
           <h3>
@@ -85,16 +87,18 @@ const Categories = () => {
             </span>{" "}
             Levels
           </h3>
-          {levels.map((level) => {
-            return (
-              <Category
-                name={level.levelName}
-                key={level.levelIndex}
-                levelWords={level.levelWordsArray}
-                openCategory={openCategory}
-              />
-            );
-          })}
+          <div className="categories__container">
+            {levels.map((level) => {
+              return (
+                <Category
+                  name={level.levelName}
+                  key={level.levelIndex}
+                  levelWords={level.levelWordsArray}
+                  openCategory={openCategory}
+                />
+              );
+            })}
+          </div>
         </div>
         <button
           className="categories__cancel-btn"

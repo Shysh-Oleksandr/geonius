@@ -1,0 +1,228 @@
+/* Quiz */
+.quiz {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.quiz .word__translation {
+  color: #30519b;
+  font-weight: bold;
+  font-size: 3.5rem;
+  letter-spacing: 5px;
+  text-transform: lowercase;
+
+  line-height: 4rem;
+}
+
+.quiz__options-container {
+  margin: 5rem 1.2rem 0;
+}
+
+.quiz__hint-container {
+  margin-right: 1.5rem;
+  margin-bottom: 1.5rem;
+  min-height: 40px;
+}
+
+.quiz__hint {
+  background-color: transparent;
+  width: 40px;
+  height: 40px;
+  text-align: right;
+  display: block;
+  margin-left: auto;
+  transition: all 0.3s ease;
+}
+
+.quiz__hint:hover {
+  opacity: 0.6;
+}
+
+.quiz__hint img {
+  max-width: 100%;
+  height: auto;
+}
+
+.quiz__option {
+  display: block;
+  width: 100%;
+  padding: 0.8rem 0;
+  margin: 1.1rem 0;
+  border-radius: 0.65rem;
+  background-color: #e0e0e0;
+  font-size: 1.4rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0px 2px 6px 0px rgb(48 81 155 / 25%);
+}
+
+.quiz__option.is-hinted {
+  text-decoration: line-through;
+  background: #d8d7d7;
+  opacity: 0.3;
+  box-shadow: none;
+  cursor: initial;
+}
+
+.quiz__option:not(.is-hinted):hover {
+  color: #fff;
+  box-shadow: 0px 3px 5px 2px rgb(48 81 155 / 40%);
+  background-color: #22cff9;
+}
+
+/* Quiz word-modal */
+.quiz__word-modal {
+  position: fixed;
+  z-index: 12;
+  bottom: -100%;
+  left: 0;
+  right: 0;
+  color: #fff;
+  border-top-left-radius: 1.3rem;
+  border-top-right-radius: 1.3rem;
+  padding: 0.5rem;
+  cursor: pointer;
+  transition: all 0.8s ease;
+}
+
+.quiz__word-modal.show {
+  bottom: 0;
+  top: auto;
+}
+
+.quiz__word-modal.full-info {
+  border-radius: 0;
+  top: 0;
+  bottom: 0;
+}
+
+.quiz__word-modal.correct {
+  background-color: #43e99c;
+}
+
+.quiz__word-modal.wrong {
+  background-color: #f6446a;
+}
+
+.quiz__word-modal:hover .quiz__arrow-up {
+  color: #fff;
+}
+
+.dark-bg {
+  position: absolute;
+  z-index: 10;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+.quiz__short-info .word__translation {
+  color: #fff;
+  font-size: 2rem;
+  font-weight: 500;
+  letter-spacing: 2px;
+  line-height: 2rem;
+}
+
+.quiz .quiz__combo {
+  position: absolute;
+  left: 11.5rem;
+  top: 0.5rem;
+  font-size: 1.2rem;
+  z-index: 6;
+  line-height: 1.8rem;
+}
+
+.quiz .quiz__combo span {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.quiz__arrow-up {
+  font-size: 2rem;
+  cursor: pointer;
+  color: #e0d5d5;
+  transition: all 0.3s ease;
+}
+
+.quiz .quiz__correct-icon {
+  font-size: 3.5rem;
+  line-height: 2rem;
+}
+
+.full-info .quiz__correct-icon {
+  font-size: 2.5rem;
+  line-height: 1rem;
+}
+
+.quiz .word__label {
+  color: #fff;
+  font-size: 2.4rem;
+  font-weight: 600;
+  line-height: 3rem;
+}
+.quiz .word__phonetic {
+  color: #979797;
+}
+.quiz .word__audio-container.has-audio:hover .word__label,
+.quiz .word__audio-container.has-audio:hover .word__phonetic,
+.quiz .word__audio-container.has-audio:hover .word__translation {
+  color: #979797;
+}
+
+.quiz .word__label,
+.quiz .word__phonetic,
+.quiz .word__translation {
+  transition: all 0.3s ease;
+}
+
+.quiz .word__label.wrong-option {
+  text-decoration: line-through;
+  margin-bottom: 3rem;
+}
+
+.quiz .word__label.wrong-option::first-letter {
+  text-transform: lowercase;
+}
+
+.full-info .quiz__modal-full-top {
+  background-color: #43e99c;
+  padding: 0.5rem;
+  padding-top: 2rem;
+}
+
+.full-info {
+  background-color: #fff !important;
+  padding: 0;
+  cursor: initial;
+}
+
+.full-info .word__translations {
+  display: block;
+  margin: 2rem 0;
+  padding: 0 1rem;
+}
+
+.full-info .word__translation:not(.word__translation-top) {
+  color: #212121;
+  font-weight: 500;
+  font-size: 1.6rem;
+  letter-spacing: 1px;
+  text-transform: lowercase;
+  line-height: 1.6rem;
+  margin-left: 2rem;
+}
+
+.full-info .word__translations li:before {
+  background-color: #e0e0e0;
+  color: #212121;
+  top: 58%;
+}
+
+.quiz__additional-info {
+  margin: 0 10rem;
+}

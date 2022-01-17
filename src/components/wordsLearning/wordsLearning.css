@@ -1,6 +1,5 @@
 .words-learning {
-  margin-top: 4.59rem;
-  margin-bottom: 5rem;
+  margin: var(--toolbar-height, 73.6px) 0;
   background-color: #fff;
   border-top-left-radius: 1.3rem;
   border-top-right-radius: 1.3rem;

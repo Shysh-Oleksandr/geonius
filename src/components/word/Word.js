@@ -5,6 +5,7 @@ import { useGlobalContext } from "../../context";
 import { MODES } from "./../../context";
 import partOfSpeechShortForm from "./partOfSpeechData";
 import "./word.css";
+import "./quiz.css";
 import bulbIcon from "../../assets/idea.png";
 import { IoIosArrowUp, IoMdClose, IoMdCheckmark } from "react-icons/io";
 import BottomToolbar from "./../bottomToolbar/BottomToolbar";

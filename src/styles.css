@@ -84,8 +84,17 @@ h6 {
   font-weight: 400;
 }
 
+body.locked {
+  overflow: hidden;
+}
+
 #root {
   background: #e0e0e0;
+}
+
+:root {
+  --section-padding: 10rem;
+  --toolbar-height: 73.6px;
 }
 
 .language-selection {
@@ -149,4 +158,29 @@ h6 {
 
   min-width: 170px;
   min-height: 170px;
+}
+
+@media screen and (max-width: 1200px) {
+  :root {
+    --section-padding: 8rem;
+  }
+}
+
+@media screen and (max-width: 991.98px) {
+  :root {
+    --section-padding: 6rem;
+  }
+}
+
+@media screen and (max-width: 767.98px) {
+  :root {
+    --section-padding: 2rem;
+    --toolbar-height: 66px;
+  }
+}
+
+@media screen and (max-width: 479.98px) {
+  :root {
+    --section-padding: 0.5rem;
+  }
 }
