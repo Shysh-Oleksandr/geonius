@@ -1,4 +1,5 @@
 import React from "react";
+import "./languageSelection.css";
 
 const LanguageCard = ({ lang, chooseLang }) => {
   return (

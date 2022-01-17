@@ -1,14 +1,14 @@
+import Alert from "./components/alert/Alert";
+import BottomToolbar from "./components/bottomToolbar/BottomToolbar";
 import Categories from "./components/categories/Categories";
-import LanguageSelection from "./components/LanguageSelection";
+import CategoryCompletedModal from "./components/categoryCompletedModal/CategoryCompletedModal";
+import ModeMenu from "./components/modeMenu/ModeMenu";
 import Toolbar from "./components/toolbar/Toolbar";
+import WordList from "./components/wordList/WordList";
+import WordsLearning from "./components/wordsLearning/WordsLearning";
 import { MODES, useGlobalContext } from "./context";
 import "./styles.css";
-import WordsLearning from "./components/wordsLearning/WordsLearning";
-import BottomToolbar from "./components/bottomToolbar/BottomToolbar";
-import CategoryCompletedModal from "./components/categoryCompletedModal/CategoryCompletedModal";
-import WordList from "./components/wordList/WordList";
-import ModeMenu from "./components/modeMenu/ModeMenu";
-import Alert from "./components/alert/Alert";
+import LanguageSelection from "./components/languageSelection/LanguageSelection";
 
 function App() {
   const {
@@ -39,7 +39,7 @@ function App() {
   }
 
   return (
-    <div className="main">
+    <div className={`main ${isLangChosen ? "playing" : ""}`}>
       <Toolbar
         currentCategory={currentCategory}
         currentCategoryWords={currentCategoryWords}
