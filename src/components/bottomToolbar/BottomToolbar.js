@@ -12,6 +12,7 @@ import { MY_LISTS_ICONS, MY_LISTS_NAMES } from "../../resources/myListsData";
 import { MODES, useGlobalContext } from "./../../context";
 import MyListBtn from "./../MyListBtn";
 import "./bottomToolbar.css";
+import "../word/quiz.css";
 
 const BottomToolbar = ({
   currentCategoryWords,
