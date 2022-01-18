@@ -32,6 +32,8 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
     setCurrentWordTargetLang,
   } = useGlobalContext();
 
+  const currentWordInfo = currentCategoryWords[currentWordIndex];
+
   const [wordTranslations, setWordTranslations] = useState([]);
   const [wordData, setWordData] = useState({
     meanings: [],
@@ -47,6 +49,25 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
   const [wordAntonyms, setWordAntonyms] = useState([]);
   const [wordSynonyms, setWordSynonyms] = useState([]);
   const [isWordLoading, setIsWordLoading] = useState(true);
+
+  function filterWordTranslations(translations) {
+    let sortedArray = translations.sort((a, b) => {
+      var wordCountA = a.split(" ").length;
+      var wordCountB = b.split(" ").length;
+      return wordCountA - wordCountB;
+    });
+
+    if (lang === "ru") {
+      sortedArray = sortedArray.filter((translation) => {
+        return (
+          !translation.includes(currentWordInfo.word) ||
+          sortedArray.length === 1
+        );
+      });
+    }
+
+    return sortedArray;
+  }
 
   const fetchWordInfo = (wordInfo) => {
     const word = wordInfo.word;
@@ -93,6 +114,8 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
               .filter((item) => item)
           ),
         ];
+        wordTranslations = filterWordTranslations(wordTranslations);
+
         setWordTranslations(wordTranslations);
 
         // Fetching translations for examples.
@@ -132,7 +155,7 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
 
   useEffect(() => {
     if (currentCategoryWords.length > 0) {
-      fetchWordInfo(currentCategoryWords[currentWordIndex]);
+      fetchWordInfo(currentWordInfo);
     }
   }, [currentWordIndex, currentCategoryWords]);
   const { word, meanings, phonetics } = wordData;
@@ -159,19 +182,28 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
 
   return (
     <div className="word">
-      <div
-        onClick={(e) => playWordAudio(e, wordAudio, phonetics)}
-        className={`word__audio-container ${phonetics[0].audio && "has-audio"}`}
-      >
-        <h2 className="word__label">{word}</h2>
-        <h4 className="word__phonetic">
-          {phonetics[0].audio && <MdVolumeUp />}
-          {phonetics[0].text}
-          {phonetics[0].audio && (
-            <audio ref={wordAudio} src={phonetics[0].audio}></audio>
-          )}
-        </h4>
-      </div>
+      {phonetics[0] ? (
+        <div
+          onClick={(e) => playWordAudio(e, wordAudio, phonetics)}
+          className={`word__audio-container ${
+            phonetics[0].audio && "has-audio"
+          }`}
+        >
+          <h2 className="word__label">{currentWordInfo.word}</h2>
+          <h4 className="word__phonetic">
+            {phonetics[0].audio && <MdVolumeUp />}
+            {phonetics[0].text}
+            {phonetics[0].audio && (
+              <audio ref={wordAudio} src={phonetics[0].audio}></audio>
+            )}
+          </h4>
+        </div>
+      ) : (
+        <div className="word__audio-container">
+          <h2 className="word__label">{currentWordInfo.word}</h2>
+          <h4 className="word__phonetic"></h4>
+        </div>
+      )}
 
       <div>
         <h5 className="word__part-of-speech">

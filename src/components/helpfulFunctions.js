@@ -1,4 +1,4 @@
-import partOfSpeechShortForm from "./word/partOfSpeechData";
+import partOfSpeechShortForm from "../resources/partOfSpeechData";
 // Randomly shuffle an array.
 export function shuffle(array) {
   let currentIndex = array.length,
