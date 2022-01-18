@@ -1,7 +1,6 @@
-import { React, useEffect, useRef } from "react";
+import { React, useEffect, useRef, useState } from "react";
 import CircularProgress from "react-cssfx-loading/lib/CircularProgress";
 import { MdVolumeUp } from "react-icons/md";
-import { useState } from "react/cjs/react.development";
 import { useGlobalContext } from "../../context";
 import {
   checkResponse,

@@ -1,11 +1,10 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { AiFillStar } from "react-icons/ai";
 import {
   IoIosArrowBack,
   IoIosArrowDown,
   IoIosArrowForward,
 } from "react-icons/io";
-import { useState } from "react/cjs/react.development";
 import { MY_LISTS_ICONS, MY_LISTS_NAMES } from "../../resources/myListsData";
 import { MODES, useGlobalContext } from "./../../context";
 import MyListBtn from "./../MyListBtn";
