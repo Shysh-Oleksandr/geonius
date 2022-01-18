@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import "./alert.css";
 
-const Alert = ({ msg, removeAlert, dependency }) => {
+const Alert = ({ msg, removeAlert }) => {
   const alertRef = useRef();
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -14,7 +14,7 @@ const Alert = ({ msg, removeAlert, dependency }) => {
       alertRef.current.className = "alert";
     }, 2600);
     return () => clearTimeout(timeout, fadeInTimeout, fadeOutTimeout);
-  }, [dependency]);
+  }, []);
   return (
     <p ref={alertRef} className="alert">
       {msg}

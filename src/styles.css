@@ -87,17 +87,52 @@ h6 {
 body.locked {
   overflow: hidden;
 }
+/* Scrollbar */
+/* width */
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 0.4rem;
+}
+
+/* Track */
+html::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Handle */
+html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb {
+  background: #c6c2c2;
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+html::-webkit-scrollbar-thumb:hover,
+body::-webkit-scrollbar-thumb:hover {
+  background: #a3a0a0;
+}
 
 .main.playing {
   background-color: #e0e0e0;
 }
 
+.loading {
+  position: absolute;
+  z-index: 14;
+  height: 30vh;
+  width: 30vw;
+  left: 50%;
+  transform: translateX(-50%);
+  top: var(--toolbar-height, 73px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 :root {
   --section-padding: 10rem;
   --toolbar-height: 73.6px;
-  --select-border: #777;
-  --select-focus: blue;
-  --select-arrow: var(--select-border);
 }
 
 @media screen and (max-width: 1200px) {
@@ -122,5 +157,9 @@ body.locked {
 @media screen and (max-width: 479.98px) {
   :root {
     --section-padding: 0.5rem;
+  }
+
+  .loading {
+    top: calc(var(--toolbar-height, 73px) * 0.5);
   }
 }

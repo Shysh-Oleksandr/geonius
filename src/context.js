@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
+import { useLocalStorage } from "./components/LocalStorage";
 import langs from "./resources/langData";
 import levelsData from "./resources/levelsData";
 import myListsData from "./resources/myListsData";
-import { useLocalStorage } from "./components/LocalStorage";
 
 const AppContext = React.createContext();
 export const MODES = {
@@ -13,6 +13,9 @@ export const MODES = {
 };
 
 const AppProvider = ({ children }) => {
+  const listsNames = ["Unknown", "Uncertain", "Learned"];
+
+  // States, saved in the local storage.
   const [myLists, setMyLists] = useLocalStorage("myLists", myListsData);
   const [levels, setLevels] = useLocalStorage("levels", levelsData);
   const [words, setWords] = useLocalStorage("words", []);
@@ -36,19 +39,27 @@ const AppProvider = ({ children }) => {
   const [lang, setLang] = useLocalStorage("lang", "en");
   const [targetLang, setTargetLang] = useLocalStorage("targetLang", "de");
 
-  const [loading, setLoading] = useState(false);
+  // Other states.
   const [currentCategoryWords, setCurrentCategoryWords] = useState([]);
+  const [alert, setAlert] = useState({ show: false, msg: "" });
+  // States to check if any menus are open.
   const [isCategoryMenuOpened, setIsCategoryMenuOpened] = useState(false);
   const [isCategoryCompleted, setIsCategoryCompleted] = useState(false);
   const [isWordListOpened, setIsWordListOpened] = useState(false);
   const [isModeMenuOpened, setIsModeMenuOpened] = useState(false);
-  const [starredList, setStarredList] = useState(getListData("Starred"));
+  // Chosen language states.
   const [currentWordSourceLang, setCurrentWordSourceLang] = useState("en");
   const [currentWordTargetLang, setCurrentWordTargetLang] = useState("de");
+  // Special lists states.
+  const [starredList, setStarredList] = useState(getListData("Starred"));
   const [unknownUncertainList, setUnknownUncertainList] = useState(
     getListData("Unknown + Uncertain")
   );
-  const [alert, setAlert] = useState({ show: false, msg: "" });
+  const myListsArray = myLists.filter((myList) =>
+    listsNames.includes(myList.listName)
+  );
+  const [myAddedLists, setMyAddedLists] = useState(myListsArray);
+  // Quiz mode states.
   const [randomMode, setRandomMode] = useState(false);
   const [guess, setGuess] = useState({
     isGuessed: false,
@@ -56,17 +67,11 @@ const AppProvider = ({ children }) => {
   });
   const [showWordInfo, setShowWordInfo] = useState(false);
 
-  const listsNames = ["Unknown", "Uncertain", "Learned"];
-  const myListsArray = myLists.filter((myList) =>
-    listsNames.includes(myList.listName)
-  );
-  const [myAddedLists, setMyAddedLists] = useState(myListsArray);
-
   function getListData(listName) {
     return myLists.find((list) => list.listName === listName);
   }
 
-  // const [searchTerm, setSearchTerm] = useState("a");
+  // Language selection functions.
   const selectCurrentLanguage = (event) => {
     let value = event.target.value;
     setLang(value);
@@ -81,6 +86,7 @@ const AppProvider = ({ children }) => {
     setCurrentCategoryWords([]);
   };
 
+  // Functions for setting words to categories.
   const levelsByWords = levels.map((level) => {
     return level.levelWordsNumber;
   });
@@ -108,11 +114,6 @@ const AppProvider = ({ children }) => {
     }, 0);
   }
 
-  const getLangName = (langCode) => {
-    let foundLang = langs.find((lang) => lang.langCode === langCode);
-    return foundLang.langName;
-  };
-
   const getCategoryWords = (categoryName) => {
     let resultWords = [];
     if (!categoryName) {
@@ -131,24 +132,34 @@ const AppProvider = ({ children }) => {
     return resultWords;
   };
 
+  // Other functions.
+  const getLangName = (langCode) => {
+    let foundLang = langs.find((lang) => lang.langCode === langCode);
+    return foundLang.langName;
+  };
+
   let currLangName = getLangName(lang);
 
   const showAlert = (show = false, msg = "") => {
     setAlert({ show, msg });
   };
 
+  // Use effects.
+  // Setting words for chosen language.
   useEffect(() => {
     if (isLangChosen) {
       setWords(langs.find((lang) => lang.langCode === targetLang).langWords);
     }
   }, []);
 
+  // Defining categories when language is changed.
   useEffect(() => {
     if (isLangChosen) {
       defineWordsByLevel();
     }
   }, [words]);
 
+  // Choosing random mode.
   useEffect(() => {
     if (randomMode) {
       const modesArray = [MODES.SLIDE, MODES.QUIZ];
@@ -158,10 +169,12 @@ const AppProvider = ({ children }) => {
     }
   }, [randomMode, currentWordIndex]);
 
+  // Setting new category words each time current category is changed.
   useEffect(() => {
     setCurrentCategoryWords(getCategoryWords(currentCategory));
   }, [currentCategory]);
 
+  // Returning states for global usage.
   return (
     <AppContext.Provider
       value={{
@@ -171,7 +184,6 @@ const AppProvider = ({ children }) => {
         targetLang,
         levels,
         myLists,
-        loading,
         currentCategory,
         levelsByWords,
         currLangName,
@@ -190,29 +202,28 @@ const AppProvider = ({ children }) => {
         randomMode,
         guess,
         currentWordSourceLang,
-        showWordInfo,
         currentWordTargetLang,
+        showWordInfo,
+        setCurrentWordIndex,
+        setIsLangChosen,
+        setCurrentCategory,
+        setComboNumber,
+        setCurrentMode,
+        setMyLists,
         setCurrentWordSourceLang,
         showAlert,
         setShowWordInfo,
         setCurrentWordTargetLang,
         setGuess,
         setRandomMode,
-        setComboNumber,
         setAlert,
         getCategoryWords,
-        setCurrentMode,
         setIsModeMenuOpened,
         setIsCategoryCompleted,
         setStarredList,
-        setMyLists,
         setIsWordListOpened,
-        setCurrentWordIndex,
         setMyAddedLists,
-        setLoading,
-        setIsLangChosen,
         setUnknownUncertainList,
-        setCurrentCategory,
         setCurrentCategoryWords,
         setIsCategoryMenuOpened,
         chooseLang,

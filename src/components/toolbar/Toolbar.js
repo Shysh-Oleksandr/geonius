@@ -5,6 +5,7 @@ import "./toolbar.css";
 import { AiOutlineSearch } from "react-icons/ai";
 import { MODES, useGlobalContext } from "./../../context";
 import langs from "./../../resources/langData";
+import ToolbarBtn from "./ToolbarBtn";
 
 const Toolbar = ({ currentCategory, currentCategoryWords }) => {
   const {
@@ -25,16 +26,16 @@ const Toolbar = ({ currentCategory, currentCategoryWords }) => {
     return foundLang.flagIcon;
   }
 
-  return (
-    <div className="toolbar">
-      <button
-        type="button"
-        className="toolbar__category"
-        onClick={() => setIsCategoryMenuOpened(true)}
-      >
+  const toolbarBtns = [
+    {
+      class: "toolbar__category",
+      onClickFunction: () => setIsCategoryMenuOpened(true),
+      icon: (
         <div className="toolbar__category-icon">
           <MdPlayArrow />
         </div>
+      ),
+      additionalInfo: (
         <div className="toolbar__category-info">
           <h4
             className={`toolbar__category-title ${
@@ -51,7 +52,34 @@ const Toolbar = ({ currentCategory, currentCategoryWords }) => {
             ({currentWordIndex + 1}/{currentCategoryWords.length})
           </div>
         </div>
-      </button>
+      ),
+    },
+    {
+      class: "toolbar__language",
+      onClickFunction: () => setIsLangChosen(false),
+      icon: <MdLanguage />,
+    },
+    {
+      class: "toolbar__words-list",
+      onClickFunction: () => setIsWordListOpened(true),
+      icon: <GiHamburgerMenu />,
+      conditionToShow: currentMode !== MODES.QUIZ,
+    },
+    {
+      class: "toolbar__mode",
+      onClickFunction: () => setIsModeMenuOpened(true),
+      icon: <MdChromeReaderMode />,
+    },
+  ];
+
+  return (
+    <div className="toolbar">
+      <ToolbarBtn
+        className={toolbarBtns[0].class}
+        onClickFunction={toolbarBtns[0].onClickFunction}
+        icon={toolbarBtns[0].icon}
+        additionalInfo={toolbarBtns[0].additionalInfo}
+      />
       <div className="toolbar__right">
         <div className="toolbar__curr-langs">
           <img
@@ -65,33 +93,18 @@ const Toolbar = ({ currentCategory, currentCategoryWords }) => {
             className="toolbar__target-lang-img"
           />
         </div>
-        <button
-          type="button"
-          className="toolbar__language"
-          onClick={() => setIsLangChosen(false)}
-        >
-          <MdLanguage />
-        </button>
-        {/* <button type="button" className="toolbar__search">
-          <AiOutlineSearch />
-        </button> */}
-        {currentMode !== MODES.QUIZ && (
-          <button
-            type="button"
-            className="toolbar__words-list"
-            onClick={() => setIsWordListOpened(true)}
-          >
-            <GiHamburgerMenu />
-          </button>
-        )}
-
-        <button
-          type="button"
-          className="toolbar__mode"
-          onClick={() => setIsModeMenuOpened(true)}
-        >
-          <MdChromeReaderMode />
-        </button>
+        {toolbarBtns.map((btn, index) => {
+          if (index === 0) return;
+          return (
+            <ToolbarBtn
+              key={index}
+              className={btn.class}
+              onClickFunction={btn.onClickFunction}
+              icon={btn.icon}
+              conditionToShow={btn.conditionToShow}
+            />
+          );
+        })}
       </div>
     </div>
   );

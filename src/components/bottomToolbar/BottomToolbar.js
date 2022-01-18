@@ -4,15 +4,13 @@ import {
   IoIosArrowBack,
   IoIosArrowDown,
   IoIosArrowForward,
-  IoMdCheckmark,
 } from "react-icons/io";
-import { MdReplay } from "react-icons/md";
 import { useState } from "react/cjs/react.development";
 import { MY_LISTS_ICONS, MY_LISTS_NAMES } from "../../resources/myListsData";
 import { MODES, useGlobalContext } from "./../../context";
 import MyListBtn from "./../MyListBtn";
 import "./bottomToolbar.css";
-import "../word/quiz.css";
+import QuizBottomToolbar from "./QuizBottomToolbar";
 
 const BottomToolbar = ({
   currentCategoryWords,
@@ -48,69 +46,7 @@ const BottomToolbar = ({
 
   const currentWord = currentCategoryWords[currentWordIndex];
 
-  useEffect(() => {
-    if (currentMode === MODES.SLIDE) {
-      setIsSlided(true);
-    }
-    checkListsForWord();
-
-    document.addEventListener("keydown", handleKeyPress);
-    return () => {
-      // Cleanup the event listener
-      document.removeEventListener("keydown", handleKeyPress);
-    };
-  }, [
-    currentWordIndex,
-    currentCategoryWords,
-    currentMode,
-    showWordInfo,
-    guess,
-  ]);
-
-  useEffect(() => {
-    if (currentMode === MODES.SLIDE) {
-      if (isSlided) {
-        document.body.classList.add("locked");
-      } else {
-        document.body.classList.remove("locked");
-      }
-    } else {
-      document.body.classList.remove("locked");
-    }
-  }, [isSlided, currentMode]);
-
-  useEffect(() => {
-    if (isCategoryCompleted) {
-      setCurrentWordIndex(0);
-    }
-  }, [currentCategoryWords]);
-
-  useEffect(() => {
-    setMyLists((prevMyLists) => {
-      let newMyLists = prevMyLists.map((prevMyList) => {
-        if (prevMyList.listName === MY_LISTS_NAMES.UNKNOWN_UNCERTAIN) {
-          return unknownUncertainList;
-        } else if (prevMyList.listName === MY_LISTS_NAMES.STARRED) {
-          return starredList;
-        } else {
-          return prevMyList;
-        }
-      });
-      return newMyLists;
-    });
-  }, [unknownUncertainList, starredList, myAddedLists, starred]);
-
-  function handleKeyPress(e) {
-    if (currentMode === MODES.QUIZ && !guess.isCorrect && !showWordInfo) return;
-    if (e.key === "ArrowLeft" || e.key === "Backspace") {
-      decrement();
-    } else if (e.key === "ArrowRight" || e.key === "Enter") {
-      increment();
-    } else if (e.key === " ") {
-      if (currentMode === MODES.SLIDE) setIsSlided(false);
-    }
-  }
-
+  // Checking if current word was in any of lists and making icons active if so.
   function checkListsForWord() {
     // For my lists.
     setMyAddedLists((prevLists) => {
@@ -134,7 +70,6 @@ const BottomToolbar = ({
 
     // For the starred list.
     // If the word is in starred list then make starred active. Otherwise removes active.
-
     starredList.listWordsArray.filter((starredObject) => {
       if (currentWord) {
         return (
@@ -147,6 +82,75 @@ const BottomToolbar = ({
       : setStarred(false);
   }
 
+  // Resetting current word index each time current category words state is changed.
+  useEffect(() => {
+    if (isCategoryCompleted) {
+      setCurrentWordIndex(0);
+    }
+  }, [currentCategoryWords]);
+
+  // Each time word, category, mode are changed, checking if current word is in any lists.
+  useEffect(() => {
+    if (currentMode === MODES.SLIDE) {
+      setIsSlided(true);
+    }
+    checkListsForWord();
+
+    document.addEventListener("keydown", handleKeyPress);
+    return () => {
+      // Cleanup the event listener
+      document.removeEventListener("keydown", handleKeyPress);
+    };
+  }, [
+    currentWordIndex,
+    currentCategoryWords,
+    currentMode,
+    showWordInfo,
+    guess,
+  ]);
+
+  // Preventing scrolling if current mode is slide mode.
+  useEffect(() => {
+    if (currentMode === MODES.SLIDE) {
+      if (isSlided) {
+        document.body.classList.add("locked");
+      } else {
+        document.body.classList.remove("locked");
+      }
+    } else {
+      document.body.classList.remove("locked");
+    }
+  }, [isSlided, currentMode]);
+
+  // If a list changes, update lists' state.
+  useEffect(() => {
+    setMyLists((prevMyLists) => {
+      let newMyLists = prevMyLists.map((prevMyList) => {
+        if (prevMyList.listName === MY_LISTS_NAMES.UNKNOWN_UNCERTAIN) {
+          return unknownUncertainList;
+        } else if (prevMyList.listName === MY_LISTS_NAMES.STARRED) {
+          return starredList;
+        } else {
+          return prevMyList;
+        }
+      });
+      return newMyLists;
+    });
+  }, [unknownUncertainList, myAddedLists, starred]);
+
+  // Allowing to control the interface by keys.
+  function handleKeyPress(e) {
+    if (currentMode === MODES.QUIZ && !guess.isCorrect && !showWordInfo) return;
+    if (e.key === "ArrowLeft" || e.key === "Backspace") {
+      decrement();
+    } else if (e.key === "ArrowRight" || e.key === "Enter") {
+      increment();
+    } else if (e.key === " ") {
+      if (currentMode === MODES.SLIDE) setIsSlided(false);
+    }
+  }
+
+  // Changing current word to next one if it exists.
   function increment(e) {
     if (!e) e = window.event;
     e.stopPropagation();
@@ -159,6 +163,7 @@ const BottomToolbar = ({
     }
   }
 
+  // Changing current word to previous one if it exists.
   function decrement(e) {
     if (!e) e = window.event;
     e.stopPropagation();
@@ -167,6 +172,7 @@ const BottomToolbar = ({
       : showAlert(true, "The first item.");
   }
 
+  // Adding or removing current word from starred list when the icon is clicked.
   const handleStarredClick = (e) => {
     let starredListArray = starredList;
     if (!e) e = window.event;
@@ -188,6 +194,7 @@ const BottomToolbar = ({
     setStarredList(starredListArray);
   };
 
+  // Adding or removing current word from a list when the icon is clicked.
   const handleAddToList = (listName) => {
     // Find the current list(that was clicked).
     let currentList = myAddedLists.find(
@@ -231,84 +238,17 @@ const BottomToolbar = ({
 
   if (currentMode === MODES.QUIZ) {
     return (
-      <div className="bottom-toolbar quiz-mode">
-        <MyListBtn
-          className={`word__star ${starred ? "active" : ""}`}
-          icon={<AiFillStar />}
-          onClick={(e) => handleStarredClick(e)}
-        />
-        <div
-          className="bottom-toolbar__my-list-btns"
-          onClick={(e) => {
-            if (!e) e = window.event;
-            e.stopPropagation();
-          }}
-        >
-          {myAddedLists.map((myList, index) => {
-            return (
-              <MyListBtn
-                key={index}
-                className={`bottom-toolbar__${myList.className}`}
-                icon={MY_LISTS_ICONS[index + 1].icon}
-                onClick={() => handleAddToList(myList.listName)}
-              />
-            );
-          })}
-        </div>
-        {isCorrect || showWordInfo ? (
-          <div className="quiz__btns">
-            <button
-              type="button"
-              className="bottom-toolbar__arrow-back bottom-toolbar__arrow"
-              onClick={decrement}
-            >
-              <IoIosArrowBack />
-            </button>
-            <button
-              type="button"
-              className="bottom-toolbar__arrow-forward bottom-toolbar__arrow"
-              onClick={increment}
-            >
-              Next{" "}
-              <span>
-                <IoIosArrowForward />
-              </span>
-            </button>
-          </div>
-        ) : (
-          <div className="quiz__btns">
-            <button
-              type="button"
-              className="bottom-toolbar__try-again  bottom-toolbar__arrow"
-              onClick={(e) => {
-                if (!e) e = window.event;
-                e.stopPropagation();
-                setShowWordInfo(false);
-                setGuess({
-                  isGuessed: false,
-                  isCorrect: undefined,
-                  replay: true,
-                });
-              }}
-            >
-              <span>
-                <MdReplay />
-              </span>{" "}
-              Try again
-            </button>
-            <button
-              type="button"
-              className="bottom-toolbar__answer bottom-toolbar__arrow"
-              onClick={() => setShowWordInfo(true)}
-            >
-              <span>
-                <IoMdCheckmark />
-              </span>{" "}
-              Answer
-            </button>
-          </div>
-        )}
-      </div>
+      <QuizBottomToolbar
+        starred={starred}
+        handleStarredClick={handleStarredClick}
+        isCorrect={isCorrect}
+        setGuess={setGuess}
+        setShowWordInfo={setShowWordInfo}
+        showWordInfo={showWordInfo}
+        handleAddToList={handleAddToList}
+        decrement={decrement}
+        increment={increment}
+      />
     );
   }
 

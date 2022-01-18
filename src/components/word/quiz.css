@@ -371,6 +371,28 @@
   color: #fff;
 }
 
+/* Full info scrollbar */
+/* width */
+.full-info::-webkit-scrollbar {
+  width: 0.4rem;
+}
+
+/* Track */
+.full-info::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Handle */
+.full-info::-webkit-scrollbar-thumb {
+  background: #c6c2c2;
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+.full-info::-webkit-scrollbar-thumb:hover {
+  background: #a3a0a0;
+}
+
 @media screen and (max-width: 991.98px) {
   .quiz .word__translation {
     font-size: 3.5rem;

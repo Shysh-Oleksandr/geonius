@@ -12,7 +12,6 @@ import LanguageSelection from "./components/languageSelection/LanguageSelection"
 
 function App() {
   const {
-    loading,
     isLangChosen,
     isCategoryMenuOpened,
     currentCategory,
@@ -24,11 +23,6 @@ function App() {
     isModeMenuOpened,
     showAlert,
   } = useGlobalContext();
-
-  if (loading) {
-    console.log("load");
-    return <h1>Loading...</h1>;
-  }
 
   if (!isLangChosen) {
     return (
@@ -44,9 +38,7 @@ function App() {
         currentCategory={currentCategory}
         currentCategoryWords={currentCategoryWords}
       />
-      {alert.show && (
-        <Alert {...alert} removeAlert={showAlert} /> // dependency
-      )}
+      {alert.show && <Alert {...alert} removeAlert={showAlert} />}
 
       {isCategoryMenuOpened && <Categories />}
       {isWordListOpened && (

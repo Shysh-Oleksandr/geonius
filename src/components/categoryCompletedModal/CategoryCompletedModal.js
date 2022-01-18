@@ -11,7 +11,6 @@ const CategoryCompletedModal = () => {
     setIsCategoryCompleted,
     setCurrentCategory,
     setShowWordInfo,
-
     setCurrentWordIndex,
     currentMode,
     setGuess,

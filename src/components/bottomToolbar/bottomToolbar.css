@@ -3,13 +3,17 @@
   align-items: center;
   justify-content: space-between;
   padding: 0.5rem var(--section-padding, 10rem) 1rem;
-  width: 100%;
+  width: calc(100% - 0.4rem);
   background-color: rgba(255, 255, 255, 0.5);
 
   position: fixed;
   bottom: 0;
   left: 0;
   z-index: 99;
+}
+
+body.locked .bottom-toolbar {
+  width: 100%;
 }
 
 .bottom-toolbar.slide-mode .bottom-toolbar__my-list-btns {
