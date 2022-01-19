@@ -189,6 +189,7 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
           }`}
         >
           <h2 className="word__label">
+            {/* If current word info isn't undefined, output its word, else word from wordData */}
             {currentWordInfo ? currentWordInfo.word : word}
           </h2>
           <h4 className="word__phonetic">
