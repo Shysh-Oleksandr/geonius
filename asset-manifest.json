@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/multilanguer/static/css/main.cb5563ce.css",
-    "main.js": "/multilanguer/static/js/main.99707389.js",
+    "main.js": "/multilanguer/static/js/main.b09d6ffc.js",
     "static/media/PinClipart.com_confetti-clip-art_5233944.png": "/multilanguer/static/media/PinClipart.com_confetti-clip-art_5233944.180faee1280e5509be22.png",
     "index.html": "/multilanguer/index.html",
     "main.cb5563ce.css.map": "/multilanguer/static/css/main.cb5563ce.css.map",
-    "main.99707389.js.map": "/multilanguer/static/js/main.99707389.js.map"
+    "main.b09d6ffc.js.map": "/multilanguer/static/js/main.b09d6ffc.js.map"
   },
   "entrypoints": [
     "static/css/main.cb5563ce.css",
-    "static/js/main.99707389.js"
+    "static/js/main.b09d6ffc.js"
   ]
 }
