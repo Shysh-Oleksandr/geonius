@@ -109,7 +109,6 @@ const QuizWord = ({
       do {
         randomOption = prev[Math.floor(Math.random() * prev.length)].option;
       } while (randomOption === currentWord.word);
-      console.log(randomOption);
       let newOptions = prev.map((option) => {
         if (option.option === randomOption) {
           return { option: option.option, isHinted: true };
@@ -117,7 +116,6 @@ const QuizWord = ({
           return option;
         }
       });
-      console.log(newOptions);
       return newOptions;
     });
     setIsHintUsed(true);

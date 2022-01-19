@@ -188,7 +188,9 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
             phonetics[0].audio && "has-audio"
           }`}
         >
-          <h2 className="word__label">{currentWordInfo.word}</h2>
+          <h2 className="word__label">
+            {currentWordInfo ? currentWordInfo.word : word}
+          </h2>
           <h4 className="word__phonetic">
             {phonetics[0].audio && <MdVolumeUp />}
             {phonetics[0].text}
@@ -199,7 +201,9 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
         </div>
       ) : (
         <div className="word__audio-container">
-          <h2 className="word__label">{currentWordInfo.word}</h2>
+          <h2 className="word__label">
+            {currentWordInfo ? currentWordInfo.word : word}
+          </h2>
           <h4 className="word__phonetic"></h4>
         </div>
       )}
