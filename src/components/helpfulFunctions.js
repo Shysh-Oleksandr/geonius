@@ -69,7 +69,7 @@ export function fetchTranslation(word, targetLang, lang) {
       headers: {
         "x-rapidapi-host":
           "translated-mymemory---translation-memory.p.rapidapi.com",
-        "x-rapidapi-key": "db4d8beb51mshf5068d8121f2d4ap112da4jsne8342999e57f",
+        "x-rapidapi-key": "7d52c9a743msh7da5035302dcedep1e2d55jsn6d0d4e437b55",
       },
     }
   );
