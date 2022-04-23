@@ -77,6 +77,7 @@ export function fetchTranslation(word, targetLang, lang) {
 
 // Check fetching response.
 export function checkResponse(response) {
+  if (!response) return;
   if (response.ok) {
     return response.json();
   } else {
@@ -160,3 +161,21 @@ export const playWordAudio = (e, wordAudio, phonetics) => {
   if (!phonetics[0].audio) return;
   wordAudio.current.play();
 };
+
+export function filterWordTranslations(translations, lang, currentWordInfo) {
+  let sortedArray = translations.sort((a, b) => {
+    var wordCountA = a.split(" ").length;
+    var wordCountB = b.split(" ").length;
+    return wordCountA - wordCountB;
+  });
+
+  if (lang === "ru") {
+    sortedArray = sortedArray.filter((translation) => {
+      return (
+        !translation.includes(currentWordInfo.word) || sortedArray.length === 1
+      );
+    });
+  }
+
+  return sortedArray;
+}

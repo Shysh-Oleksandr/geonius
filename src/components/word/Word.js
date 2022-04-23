@@ -17,6 +17,7 @@ import { MODES } from "./../../context";
 import "./quiz.css";
 import QuizWord from "./QuizWord";
 import "./word.css";
+import { filterWordTranslations } from "./../helpfulFunctions";
 
 const Word = ({ currentWordIndex, currentCategoryWords }) => {
   const wordAudio = useRef(null);
@@ -39,33 +40,31 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
     phonetics: [],
     word: "",
   });
-  const [wordExamples, setWordExamples] = useState([
-    {
-      wordExample: "",
-      wordExampleTranslation: "",
-    },
-  ]);
+  const [wordExamples, setWordExamples] = useState([]);
   const [wordAntonyms, setWordAntonyms] = useState([]);
   const [wordSynonyms, setWordSynonyms] = useState([]);
   const [isWordLoading, setIsWordLoading] = useState(true);
 
-  function filterWordTranslations(translations) {
-    let sortedArray = translations.sort((a, b) => {
-      var wordCountA = a.split(" ").length;
-      var wordCountB = b.split(" ").length;
-      return wordCountA - wordCountB;
-    });
+  function getWordTranslations(userData) {
+    let wordTranslations = [
+      ...new Set(
+        userData.matches
+          .map((item) => {
+            let filteredTranslation = filterWord(
+              item.translation.toLowerCase()
+            );
+            return filteredTranslation;
+          })
+          .filter((item) => item)
+      ),
+    ];
+    wordTranslations = filterWordTranslations(
+      wordTranslations,
+      lang,
+      currentWordInfo
+    );
 
-    if (lang === "ru") {
-      sortedArray = sortedArray.filter((translation) => {
-        return (
-          !translation.includes(currentWordInfo.word) ||
-          sortedArray.length === 1
-        );
-      });
-    }
-
-    return sortedArray;
+    setWordTranslations(wordTranslations);
   }
 
   const fetchWordInfo = (wordInfo) => {
@@ -100,22 +99,8 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
       })
       .then((response) => checkResponse(response))
       .then(function (userData) {
-        // Get translations of word, filter it and set them to state.
-        let wordTranslations = [
-          ...new Set(
-            userData.matches
-              .map((item) => {
-                let filteredTranslation = filterWord(
-                  item.translation.toLowerCase()
-                );
-                return filteredTranslation;
-              })
-              .filter((item) => item)
-          ),
-        ];
-        wordTranslations = filterWordTranslations(wordTranslations);
-
-        setWordTranslations(wordTranslations);
+        // Get translations of word, filter them and set them to state.
+        getWordTranslations(userData);
 
         // Fetching translations for examples.
         return Promise.all(
@@ -141,14 +126,24 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
       })
       .catch(function (error) {
         console.warn(error);
+        // wordTargetLang === "en" &&
+        //   setCurrentWordIndex((prev) => {
+        //     if (currentWordIndex === currentCategoryWords.length - 1) {
+        //       setIsCategoryCompleted(true);
+        //       return prev;
+        //     }
+        //     return prev + 1;
+        //   });
+        return fetchTranslation(word, wordTargetLang, wordSourceLang);
+      })
+      .then((response) => checkResponse(response))
+      .then(function (userData) {
+        if (!userData) return;
+        // Get translations of word, filter them and set them to state.
+        getWordTranslations(userData);
         // If an error occurs, fetch the next word untill there are words in category.
-        setCurrentWordIndex((prev) => {
-          if (currentWordIndex === currentCategoryWords.length - 1) {
-            setIsCategoryCompleted(true);
-            return prev;
-          }
-          return prev + 1;
-        });
+
+        setIsWordLoading(false);
       });
   };
 
@@ -211,9 +206,10 @@ const Word = ({ currentWordIndex, currentCategoryWords }) => {
 
       <div>
         <h5 className="word__part-of-speech">
-          {meanings.map((meaning) => {
-            return `${convertPartOfSpeech(meaning.partOfSpeech)} `;
-          })}
+          {meanings &&
+            meanings.map((meaning) => {
+              return `${convertPartOfSpeech(meaning.partOfSpeech)} `;
+            })}
         </h5>
         <ol className="word__translations">
           {wordTranslations.map((translation, index) => {

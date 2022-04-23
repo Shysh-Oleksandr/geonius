@@ -24,7 +24,7 @@ const LanguageSelection = () => {
               value={lang}
             >
               {langs.map((lang, index) => {
-                if (lang.langCode === "en") return;
+                // if (lang.langCode === "en") return;
                 return (
                   <option key={index} value={lang.langCode}>
                     {lang.langName}
@@ -37,7 +37,7 @@ const LanguageSelection = () => {
       </div>
       <div className="language-selection__bottom">
         {langs.map((langEl, index) => {
-          if (langEl.langName !== currLangName && langEl.langCode === "en") {
+          if (langEl.langName !== currLangName) {
             return (
               <LanguageCard lang={langEl} key={index} chooseLang={chooseLang} />
             );
