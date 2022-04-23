@@ -158,8 +158,8 @@ export function getSynonymsAntonyms(data) {
 export const playWordAudio = (e, wordAudio, phonetics) => {
   if (!e) e = window.event;
   e.stopPropagation();
-  if (!phonetics[0].audio) return;
-  wordAudio.current.play();
+  if (!phonetics[0] && !phonetics[0].audio) return;
+  wordAudio.current && wordAudio.current.play();
 };
 
 export function filterWordTranslations(translations, lang, currentWordInfo) {

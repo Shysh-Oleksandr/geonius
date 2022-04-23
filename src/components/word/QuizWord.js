@@ -177,7 +177,9 @@ const QuizWord = ({
               <div
                 onClick={(e) => playWordAudio(e, wordAudio, wordData.phonetics)}
                 className={`word__audio-container ${
-                  wordData.phonetics[0].audio && "has-audio"
+                  wordData.phonetics[0] && wordData.phonetics[0].audio
+                    ? "has-audio"
+                    : ""
                 }`}
               >
                 <h2 className="word__label">{wordData.word}</h2>
@@ -185,9 +187,11 @@ const QuizWord = ({
                   {wordTranslations[0]}
                 </h2>
                 <h4 className="word__phonetic">
-                  {wordData.phonetics[0].audio && <MdVolumeUp />}
-                  {wordData.phonetics[0].text}
-                  {wordData.phonetics[0].audio && (
+                  {wordData.phonetics[0] && wordData.phonetics[0].audio && (
+                    <MdVolumeUp />
+                  )}
+                  {wordData.phonetics[0] && wordData.phonetics[0].text}
+                  {wordData.phonetics[0] && wordData.phonetics[0].audio && (
                     <audio
                       ref={wordAudio}
                       src={wordData.phonetics[0].audio}
